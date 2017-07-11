@@ -12,11 +12,13 @@ namespace DocsGenerator
     public class DocsGenerator
     {
         string gitPath;
+        string htmlPath;
         string pdfPath;
         public void GenerateDocs(string gitUrl, string outpuPath)
         {
             string tmpPath = Path.GetTempPath();
             gitPath = tmpPath + @"DocsGenerator\gitdownloads\";
+            htmlPath = tmpPath + @"DocsGenerator\html\";
             pdfPath = tmpPath + @"DocsGenerator\pdf\";
             
             if (!GetGitDirectories(gitUrl, gitPath))
@@ -27,10 +29,11 @@ namespace DocsGenerator
 
             List<DocumentsWrapper> docsList = DocumentsWrapperFactory.GenerateDocumentsWrapperListFromPath(gitPath);
             
+
         }
 
         
-        
+        // TODO: move to separate class?
         private bool GetGitDirectories(string gitUrl, string outputPath)
         {
             string result = Repository.Clone(gitUrl, outputPath);
