@@ -10,18 +10,20 @@ namespace DocsGenerator
     {
         public static bool parseAllFiles(ref List<DocumentsWrapper> docsList)
         {
-            foreach(DocumentsWrapper doc in docsList)
+            for( int i = 0; i < docsList.Count; i++)
             {
+                DocumentsWrapper doc = docsList[i];
                 if (!doc.IsDirectory)
                 {
                     editMdFile(doc.GitPath);
-                    parseFileToHtml(doc);
+                    parseFileToHtml(ref doc);
                 }
                 else
                 {
-                    parseRecursive(doc);
+                    parseRecursive(ref doc);
                 }
             }
+            return true;
         }
 
         public static void editMdFile(string path)
@@ -29,12 +31,20 @@ namespace DocsGenerator
 
         }
 
-        private static void parseRecursive(DocumentsWrapper doc)
+        private static void parseRecursive(ref DocumentsWrapper doc)
         {
-
+            if (!doc.IsDirectory)
+            {
+                editMdFile(doc.GitPath);
+                parseFileToHtml(ref doc);
+            }
+            else
+            {
+                parseRecursive(ref doc);
+            }
         }
 
-        private static void parseFileToHtml(DocumentsWrapper doc)
+        private static void parseFileToHtml(ref DocumentsWrapper doc)
         {
 
         }
