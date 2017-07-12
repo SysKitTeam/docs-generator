@@ -32,9 +32,41 @@ namespace DocsGenerator
             if (!IsDirectory)
             {
                 string shortFileName = fileName.Substring(0, fileName.LastIndexOf('.'));
-                return GitPath.Substring(0, i + 1) + shortFileName;
+                if (setInternally)
+                {
+                    HtmlPath = GitPath.Substring(0, i + 1) + shortFileName + ".html";
+                }
+                return GitPath.Substring(0, i + 1) + shortFileName + ".html";
             }
-            else return GitPath.Substring(0, i + 1) + fileName;
+            else
+            {
+                if (setInternally)
+                    HtmlPath = GitPath.Substring(0, i + 1) + fileName + ".html";
+                return GitPath.Substring(0, i + 1) + fileName + ".html";
+            }
+        }
+
+        public string GeneratePdfPath(bool setInternally = false)
+        {
+            if (String.IsNullOrEmpty(GitPath)) return string.Empty;
+            int i = GitPath.LastIndexOf('\\');
+            if (!IsDirectory)
+            {
+                string shortFileName = fileName.Substring(0, fileName.LastIndexOf('.'));
+                if (setInternally)
+                {
+                    PdfPath = GitPath.Substring(0, i + 1) + shortFileName + ".pdf";
+                }
+                return GitPath.Substring(0, i + 1) + shortFileName + ".pdf";
+            }
+            else
+            {
+                if (setInternally)
+                {
+                    PdfPath = GitPath.Substring(0, i + 1) + fileName + ".pdf";
+                }
+                return GitPath.Substring(0, i + 1) + fileName + ".pdf";
+            }
         }
     }
 }
