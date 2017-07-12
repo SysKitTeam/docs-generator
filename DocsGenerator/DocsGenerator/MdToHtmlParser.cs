@@ -31,7 +31,7 @@ namespace DocsGenerator
         /// Prepares md file for conversion to html. This method will overwrite the old md file.
         /// </summary>
         /// <param name="path">Path of the md file to be edited.</param>
-        public static void editMdFile(string path)
+        private static void editMdFile(string path)
         {
             string tempFile = Path.GetTempFileName();
 

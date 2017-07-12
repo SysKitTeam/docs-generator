@@ -54,6 +54,7 @@
     <Compile Include="DocsGenerator.cs" />
     <Compile Include="DocumentsWrapper.cs" />
     <Compile Include="DocumentsWrapperFactory.cs" />
+    <Compile Include="HtmlToPdfParser.cs" />
     <Compile Include="MdToHtmlParser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -28,7 +28,11 @@ namespace DocsGenerator
             }
 
             List<DocumentsWrapper> docsList = DocumentsWrapperFactory.GenerateDocumentsWrapperListFromPath(gitPath);
-            
+            if (!MdToHtmlParser.parseAllFiles(ref docsList))
+            {
+                throw new Exception("Something went wrong with parsing md to html conversion.");
+            }
+
 
         }
 
