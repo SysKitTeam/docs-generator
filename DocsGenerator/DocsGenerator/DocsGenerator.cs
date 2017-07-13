@@ -14,25 +14,39 @@ namespace DocsGenerator
         string gitPath;
         string htmlPath;
         string pdfPath;
-        public void GenerateDocs(string gitUrl, string outpuPath)
+        public void GenerateDocs(string gitUrl, string outputPath)
         {
             string tmpPath = Path.GetTempPath();
             gitPath = tmpPath + @"DocsGenerator\gitdownloads\";
             htmlPath = tmpPath + @"DocsGenerator\html\";
             pdfPath = tmpPath + @"DocsGenerator\pdf\";
-            
+
+
+            // Step 1: Fetch files
+            Console.WriteLine("Fetching files from GitHub...");
             if (!GetGitDirectories(gitUrl, gitPath))
             {
                 Console.WriteLine("Error fetching git files.");
                 return;
             }
+            Console.WriteLine("Files fetched.\n");
 
+            // Step 2: Parse all .md files to html format (with editing)
+            Console.WriteLine("Parsing .md to html format...");
             List<DocumentsWrapper> docsList = DocumentsWrapperFactory.GenerateDocumentsWrapperListFromPath(gitPath);
             if (!MdToHtmlParser.parseAllFiles(ref docsList))
             {
-                throw new Exception("Something went wrong with parsing md to html conversion.");
+                throw new Exception("Something went wrong with parsing md to html.");
             }
+            Console.WriteLine("Html files created.");
 
+            // Step 3: Generate single pdf from given files
+            Console.WriteLine("Generating pdf...");
+            if (!HtmlToPdfParser.GeneratePdf(docsList, outputPath))
+            {
+                throw new Exception("Something went wrong with parsing html to pdf.");
+            }
+            Console.WriteLine("")
 
         }
 

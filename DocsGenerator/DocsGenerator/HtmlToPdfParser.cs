@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,36 +10,65 @@ namespace DocsGenerator
 {
     class HtmlToPdfParser
     {
-        public static bool GeneratePdf(ref List<DocumentsWrapper> docsList, string outputPath)
+        public static bool GeneratePdf(List<DocumentsWrapper> docsList, string outputPath)
         {
-            // First, generate multiple pdfs from all the html files
-            generateIndividualPdfs(ref docsList);
-            // Second, gather all generated pdfs to a single one:
+            string tmpFile = Path.GetTempFileName();
+            generateSingleHtmlFile(docsList, tmpFile);
+            toPdf(tmpFile, outputPath);
             return true;
         }
 
-        private static bool generateIndividualPdfs(ref List<DocumentsWrapper> docsList)
+        public static void generateSingleHtmlFile(List<DocumentsWrapper> docsList, string outputFile)
         {
-            for(int i = 0; i < docsList.Count; i++)
+            using (StreamWriter writer = new StreamWriter(outputFile))
             {
-                DocumentsWrapper doc = docsList[i];
-                if (doc.IsDirectory)
+                recursiveDocumentWriter(docsList, writer);
+            }
+            
+        }
+
+        private static void appendText(string inputFile, StreamWriter outputWriter)
+        {
+            using (StreamReader reader = new StreamReader(inputFile))
+            {
+                string line;
+                while((line = reader.ReadLine()) != null)
                 {
-                    List<DocumentsWrapper> newDocsList = doc.SubDocuments;
-                    if (!generateIndividualPdfs(ref newDocsList)) return false;
-                    doc.SubDocuments = newDocsList;
+                    outputWriter.WriteLine(line);
+                }
+            }
+        }
+
+        private static void recursiveDocumentWriter(List<DocumentsWrapper> docsList, StreamWriter writer)
+        {
+            foreach (DocumentsWrapper doc in docsList)
+            {
+                if (!doc.IsDirectory)
+                {
+                    appendText(doc.HtmlPath, writer);
                 }
                 else
                 {
-                    if (!toPdf(ref doc)) return false;
+                    recursiveDocumentWriter(doc.SubDocuments, writer);
                 }
             }
-            return true;
         }
 
-        private static bool toPdf(ref DocumentsWrapper doc)
+        private static bool toPdf(string inputHtmlPath, string outputPdfPath)
         {
-            throw new NotImplementedException();
+            ProcessStartInfo startInfo = new ProcessStartInfo();
+            startInfo.FileName = "wkhtmltopdf.exe";
+            startInfo.Arguments = "toc " + inputHtmlPath + " " + outputPdfPath;
+            startInfo.UseShellExecute = false;
+            startInfo.RedirectStandardOutput = true;
+
+            Process process = new Process();
+            process.StartInfo = startInfo;
+            process.Start();
+            Console.WriteLine(process.StandardOutput.ReadToEnd());
+            process.WaitForExit();
+
+            return true;
         }
     }
 }
