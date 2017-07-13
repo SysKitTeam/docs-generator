@@ -18,10 +18,11 @@ namespace DocsGenerator
                 {
                     editMdFile(doc.GitPath);
                     parseFileToHtml(ref doc);
+                    htmlFilePostProcess(doc.HtmlPath, 1);
                 }
                 else
                 {
-                    parseRecursive(ref doc);
+                    parseRecursive(ref doc, 2);
                 }
             }
             return true;
@@ -74,16 +75,60 @@ namespace DocsGenerator
             File.Move(tempFile, path);
         }
 
-        private static void parseRecursive(ref DocumentsWrapper doc)
+        private static void htmlFilePostProcess(string path, int level)
+        {
+            string titleHeaderTag = "<h" + level + ">";
+            string otherHeaderTag = "<h" + (level + 1) + ">";
+            string titleHeaderEndTag = "</h" + level + ">";
+            string otherHeaderEndTag = "</h" + (level + 1) + ">";
+            string tempFile = Path.GetTempFileName();
+
+            using (StreamReader reader = new StreamReader(path))
+            using (StreamWriter writer = new StreamWriter(tempFile))
+            {
+                string line;
+                bool firstHeader = true;
+                while((line = reader.ReadLine()) != null)
+                {
+                    if (line.Contains("<h2>"))
+                    {
+                        if (firstHeader)
+                        {
+                            line.Replace("<h2>", titleHeaderTag);
+                        } else
+                        {
+                            line.Replace("<h2>", otherHeaderTag);
+                        }
+                    } else if (line.Contains("</h2>"))
+                    {
+                        if (firstHeader)
+                        {
+                            line.Replace("</h2>", titleHeaderEndTag);
+                            firstHeader = false;
+                        } else
+                        {
+                            line.Replace("</h2>", otherHeaderEndTag);
+                        }
+                    }
+                    writer.WriteLine(line);
+                }
+            }
+
+            File.Delete(path);
+            File.Move(tempFile, path);
+        }
+
+        private static void parseRecursive(ref DocumentsWrapper doc, int level)
         {
             if (!doc.IsDirectory)
             {
                 editMdFile(doc.GitPath);
                 parseFileToHtml(ref doc);
+                htmlFilePostProcess(doc.HtmlPath, level);
             }
             else
             {
-                parseRecursive(ref doc);
+                parseRecursive(ref doc, level + 1);
             }
         }
 
