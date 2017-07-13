@@ -11,10 +11,10 @@ namespace DocsGenerator
 {
     public class DocsGenerator
     {
-        string gitPath;
-        string htmlPath;
-        string pdfPath;
-        public void GenerateDocs(string gitUrl, string outputPath)
+        private static string gitPath;
+        private static string htmlPath;
+        private static string pdfPath;
+        public static void GenerateDocs(string gitUrl, string outputPath)
         {
             string tmpPath = Path.GetTempPath();
             gitPath = tmpPath + @"DocsGenerator\gitdownloads\";
@@ -46,13 +46,13 @@ namespace DocsGenerator
             {
                 throw new Exception("Something went wrong with parsing html to pdf.");
             }
-            Console.WriteLine("")
+            Console.WriteLine("");
 
         }
 
         
         // TODO: move to separate class?
-        private bool GetGitDirectories(string gitUrl, string outputPath)
+        private static bool GetGitDirectories(string gitUrl, string outputPath)
         {
             string result = Repository.Clone(gitUrl, outputPath);
             if (String.IsNullOrEmpty(result)) return false;

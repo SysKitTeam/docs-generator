@@ -38,6 +38,7 @@
             this.rbtnDefaultViewer = new System.Windows.Forms.RadioButton();
             this.btnBrowse = new System.Windows.Forms.Button();
             this.btnGenerate = new System.Windows.Forms.Button();
+            this.lblError = new System.Windows.Forms.Label();
             this.gbAfter.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -78,7 +79,7 @@
             this.gbAfter.Controls.Add(this.rbtnDefaultViewer);
             this.gbAfter.Controls.Add(this.rbtnFileExplorer);
             this.gbAfter.Controls.Add(this.rbtnDoNothing);
-            this.gbAfter.Location = new System.Drawing.Point(30, 84);
+            this.gbAfter.Location = new System.Drawing.Point(30, 134);
             this.gbAfter.Name = "gbAfter";
             this.gbAfter.Size = new System.Drawing.Size(234, 122);
             this.gbAfter.TabIndex = 4;
@@ -122,26 +123,40 @@
             // 
             this.btnBrowse.Location = new System.Drawing.Point(393, 56);
             this.btnBrowse.Name = "btnBrowse";
-            this.btnBrowse.Size = new System.Drawing.Size(75, 23);
+            this.btnBrowse.Size = new System.Drawing.Size(83, 26);
             this.btnBrowse.TabIndex = 5;
             this.btnBrowse.Text = "Browse...";
             this.btnBrowse.UseVisualStyleBackColor = true;
+            this.btnBrowse.Click += new System.EventHandler(this.btnBrowse_Click);
             // 
             // btnGenerate
             // 
-            this.btnGenerate.Location = new System.Drawing.Point(286, 155);
+            this.btnGenerate.Location = new System.Drawing.Point(270, 205);
             this.btnGenerate.Name = "btnGenerate";
-            this.btnGenerate.Size = new System.Drawing.Size(182, 51);
+            this.btnGenerate.Size = new System.Drawing.Size(206, 51);
             this.btnGenerate.TabIndex = 6;
             this.btnGenerate.Text = "Generate!";
             this.btnGenerate.UseVisualStyleBackColor = true;
+            this.btnGenerate.Click += new System.EventHandler(this.btnGenerate_Click);
+            // 
+            // lblError
+            // 
+            this.lblError.AutoSize = true;
+            this.lblError.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.lblError.ForeColor = System.Drawing.Color.Red;
+            this.lblError.Location = new System.Drawing.Point(30, 92);
+            this.lblError.Name = "lblError";
+            this.lblError.Size = new System.Drawing.Size(54, 17);
+            this.lblError.TabIndex = 7;
+            this.lblError.Text = "lblError";
             // 
             // MainForm
             // 
             this.AcceptButton = this.btnGenerate;
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(503, 227);
+            this.ClientSize = new System.Drawing.Size(503, 268);
+            this.Controls.Add(this.lblError);
             this.Controls.Add(this.btnGenerate);
             this.Controls.Add(this.btnBrowse);
             this.Controls.Add(this.gbAfter);
@@ -170,6 +185,7 @@
         private System.Windows.Forms.RadioButton rbtnDoNothing;
         private System.Windows.Forms.Button btnBrowse;
         private System.Windows.Forms.Button btnGenerate;
+        private System.Windows.Forms.Label lblError;
     }
 }
 
