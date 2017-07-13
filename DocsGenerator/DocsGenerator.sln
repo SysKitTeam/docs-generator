@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocsGenerator", "DocsGenera
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocsGeneratorGUI", "DocsGeneratorGUI\DocsGeneratorGUI.csproj", "{7BCF17FC-982B-4BFE-B082-D174A4A67FCE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocsGeneratorConsole", "DocsGeneratorConsole\DocsGeneratorConsole.csproj", "{6334D141-ED52-4217-A04F-71C9060B5A3C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{7BCF17FC-982B-4BFE-B082-D174A4A67FCE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7BCF17FC-982B-4BFE-B082-D174A4A67FCE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7BCF17FC-982B-4BFE-B082-D174A4A67FCE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6334D141-ED52-4217-A04F-71C9060B5A3C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6334D141-ED52-4217-A04F-71C9060B5A3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6334D141-ED52-4217-A04F-71C9060B5A3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6334D141-ED52-4217-A04F-71C9060B5A3C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
