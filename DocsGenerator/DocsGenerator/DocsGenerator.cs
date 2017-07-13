@@ -18,9 +18,6 @@ namespace DocsGenerator
         {
             string tmpPath = Path.GetTempPath();
             gitPath = tmpPath + @"DocsGenerator\gitdownloads\";
-            htmlPath = tmpPath + @"DocsGenerator\html\";
-            pdfPath = tmpPath + @"DocsGenerator\pdf\";
-
 
             // Step 1: Fetch files
             Console.WriteLine("Fetching files from GitHub...");
