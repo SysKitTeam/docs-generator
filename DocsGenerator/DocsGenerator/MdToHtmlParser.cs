@@ -9,8 +9,10 @@ namespace DocsGenerator
 {
     class MdToHtmlParser
     {
+        
         public static bool parseAllFiles(ref List<DocumentsWrapper> docsList)
         {
+            
             for( int i = 0; i < docsList.Count; i++)
             {
                 DocumentsWrapper doc = docsList[i];
@@ -128,14 +130,18 @@ namespace DocsGenerator
             }
             else
             {
-                parseRecursive(ref doc, level + 1);
+                for (int i = 0; i < doc.SubDocuments.Count; i++)
+                {
+                    DocumentsWrapper subDoc = doc.SubDocuments[i];
+                    parseRecursive(ref subDoc, level + 1);
+                }
             }
         }
 
         private static void parseFileToHtml(ref DocumentsWrapper doc)
         {
             using (var reader = new System.IO.StreamReader(doc.GitPath))
-            using (var writer = new System.IO.StreamWriter(doc.GenerateHtmlPath()))
+            using (var writer = new System.IO.StreamWriter(doc.GenerateHtmlPath(true)))
             {
                 CommonMark.CommonMarkConverter.Convert(reader, writer);
             }

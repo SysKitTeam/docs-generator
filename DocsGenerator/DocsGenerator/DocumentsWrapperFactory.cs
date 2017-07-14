@@ -10,8 +10,10 @@ namespace DocsGenerator
 {
     class DocumentsWrapperFactory
     {
+        static List<string> processedPaths = new List<string>();
         public static List<DocumentsWrapper> GenerateDocumentsWrapperListFromPath(string rootDir)
         {
+            processedPaths = new List<string>();
             List<DocumentsWrapper> docsList = new List<DocumentsWrapper>();
             if (File.Exists(rootDir + "TOC.md"))
             {
@@ -19,7 +21,8 @@ namespace DocsGenerator
             }
             else
             {
-                generateAlphabeticalDocsList(rootDir);
+                return docsList;
+                //generateAlphabeticalDocsList(rootDir);
             }
             for (int i = 0; i < docsList.Count; i++)
             {
@@ -41,7 +44,8 @@ namespace DocsGenerator
             }
             else
             {
-                docsDir.SubDocuments = generateAlphabeticalDocsList(docsDir.GitPath);
+                return;
+                //docsDir.SubDocuments = generateAlphabeticalDocsList(docsDir.GitPath);
             }
 
             // Check for more directories, if found continue recursive
@@ -55,86 +59,127 @@ namespace DocsGenerator
             }
         }
 
-        private static List<DocumentsWrapper> parseTOC(string dirPath)
+        public static List<DocumentsWrapper> parseTOC(string dirPath)
         {
             List<DocumentsWrapper> docsList = new List<DocumentsWrapper>();
-            // structureList sluzi za podrsku vise razina naslova (odredjeno po broju '#' u TOC.md)
-            // tu se cuvaju zadnji naslovi za svaku razinu
+            // u structureList se dodaje zadnji dokument (ili folder) svake razine do sad, s tim da ako se u nekom trenutku
+            // smanji razina, sve razine veće od toga se zaboravljaju. Na ovaj način se izbjegava rekurzija kod pamćenja odnosa
+            // roditelj - dijete što se tiče strukture.
             List<DocumentsWrapper> structureList = new List<DocumentsWrapper>();
-            using (StreamReader toc = new StreamReader(dirPath + "TOC.md"))
+
+            using (StreamReader reader = new StreamReader(dirPath + "TOC.md"))
             {
-                string line;
-                
-                while ((line = toc.ReadLine()) != null)
+                string line = string.Empty;
+                while((line = reader.ReadLine()) != null)
                 {
                     if (!line.StartsWith("#")) continue;
-                    
-                    
 
                     DocumentsWrapper doc = new DocumentsWrapper();
                     string title, fileName;
                     getTitleAndFilenameFromString(line, out title, out fileName);
                     doc.Title = title;
-                    doc.fileName = fileName;
-                    if (fileName.EndsWith(".md"))
-                    {
-                        // Check if it is a directory or a file:
-                        if (File.Exists(dirPath + doc.fileName))
-                        {
-                            doc.GitPath = dirPath + doc.fileName;
-                            doc.IsDirectory = false;
-                        }
-                        else
-                        {
-                            int indexOfDotmd = doc.fileName.LastIndexOf('.');
-                            doc.fileName = doc.fileName.Remove(indexOfDotmd) + @"\";
-                            doc.IsDirectory = true;
-                            doc.GitPath = dirPath + doc.fileName;
-                        }
-                    } else
-                    {
-                        doc.IsDirectory = true;
-                        doc.GitPath = dirPath + doc.fileName;
-                    }
                     int hashcount = countHashes(line);
-                    if (hashcount == structureList.Count) // no changes in level, just add doc where needed and replace last one in structureList
+                    if (hashcount > structureList.Count) // new structure level added.
                     {
-                        if (hashcount > 1)
+                        if (hashcount > 1) // if it is 'just another' level:
                         {
-                            doc.GitPath = structureList[hashcount - 2].GitPath + doc.fileName;
-                            structureList[hashcount - 2].SubDocuments.Add(doc);
+                            doc = analyzeFileOrFolder(fileName, doc, structureList.Last().GitPath);
+                            if (processedPaths.Contains(doc.GitPath))
+                            {
+                                continue;
+                            }
+                            structureList.Last().SubDocuments.Add(doc);
+                            structureList.Add(doc);
+                        } else // if it is the first level of structure
+                        {
+                            doc = analyzeFileOrFolder(fileName, doc, dirPath);
+                            if (processedPaths.Contains(doc.GitPath))
+                            {
+                                continue;
+                            }
+                            docsList.Add(doc);
+                            structureList.Add(doc);
                         }
-                        else docsList.Add(doc);
-                        structureList[hashcount - 1] = doc;
-                    } else if (hashcount > structureList.Count()) // one level added
+                    } else if (hashcount == structureList.Count) // if it is the same level of structure
                     {
                         if (hashcount > 1)
                         {
-                            doc.GitPath = structureList[hashcount - 2].GitPath + doc.fileName;
-                            structureList[hashcount - 2].SubDocuments.Add(doc);
+                            doc = analyzeFileOrFolder(fileName, doc, structureList[hashcount - 2].GitPath);
+                            if (processedPaths.Contains(doc.GitPath))
+                            {
+                                continue;
+                            }
+                            structureList[hashcount - 1] = doc;
                         } else
                         {
+                            doc = analyzeFileOrFolder(fileName, doc, dirPath);
+                            if (processedPaths.Contains(doc.GitPath))
+                            {
+                                continue;
+                            }
                             docsList.Add(doc);
+                            structureList[hashcount - 1] = doc;
                         }
-                        
-                        structureList.Add(doc);
-                    }
-                    else // one or more levels removed
+                    } else // if the structure level has lowered:
                     {
                         structureList.RemoveRange(hashcount, structureList.Count - hashcount);
                         if (hashcount > 1)
                         {
-                            doc.GitPath = structureList[hashcount - 2].GitPath + doc.fileName;
-                            structureList[hashcount - 2].SubDocuments.Add(doc);
+                            doc = analyzeFileOrFolder(fileName, doc, structureList[hashcount - 2].GitPath);
+                            if (processedPaths.Contains(doc.GitPath))
+                            {
+                                continue;
+                            }
+                            structureList[hashcount - 1] = doc;
                         } else
                         {
+                            doc = analyzeFileOrFolder(fileName, doc, dirPath);
+                            if (processedPaths.Contains(doc.GitPath))
+                            {
+                                continue;
+                            }
                             docsList.Add(doc);
+                            structureList[hashcount - 1] = doc;
                         }
-                        structureList[hashcount - 1] = doc;
                     }
                 }
             }
             return docsList;
+        }
+
+        private static DocumentsWrapper analyzeFileOrFolder(string fileName, DocumentsWrapper doc, string relativePath)
+        {
+            if (fileName.EndsWith(".md"))
+            {
+                if (File.Exists(relativePath + fileName))
+                {
+                    doc.fileName = fileName;
+                    doc.GitPath = relativePath + fileName;
+                    doc.IsDirectory = false;
+                }
+                else
+                {
+                    int indexOfDotmd = fileName.LastIndexOf('.');
+                    doc.fileName = fileName.Remove(indexOfDotmd) + @"\";
+                    if (!Directory.Exists(relativePath + doc.fileName)) throw new IOException("Wrong assumption.");
+                    doc.GitPath = relativePath + doc.fileName;
+                    doc.IsDirectory = true;
+                }
+            }
+            else
+            {
+                if (Directory.Exists(relativePath + fileName))
+                {
+                    doc.fileName = fileName;
+                    doc.GitPath = relativePath + fileName;
+                    doc.IsDirectory = true;
+                }
+                else
+                {
+                    throw new Exception("Error finding referenced file or folder.");
+                }
+            }
+            return doc;
         }
 
         /// <summary>
@@ -175,13 +220,15 @@ namespace DocsGenerator
         private static string getTitleFromFile(string filePath)
         {
             if (!File.Exists(filePath)) return string.Empty;
-            StreamReader sr = new StreamReader(filePath);
-            string line;
-            while ((line = sr.ReadLine()) != null)
+            using (StreamReader sr = new StreamReader(filePath))
             {
-                if (line.StartsWith("title:"))
+                string line;
+                while ((line = sr.ReadLine()) != null)
                 {
-                    return line.Split(':')[1].Trim();
+                    if (line.StartsWith("title:"))
+                    {
+                        return line.Split(':')[1].Trim();
+                    }
                 }
             }
             return string.Empty;
@@ -203,7 +250,7 @@ namespace DocsGenerator
                 fileName = parts[1].Replace(")", "").Substring(1);
             } else
             {
-                title = input.Substring(countHashes(input));
+                title = input.Substring(countHashes(input) + 1);
                 fileName = title.Trim().ToLower().Replace(' ', '-') + "\\";
             }
             

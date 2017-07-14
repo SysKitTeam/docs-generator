@@ -19,6 +19,7 @@ namespace DocsGenerator
         public string HtmlPath { get; set; }
         public bool IsDirectory { get; set; }
         public List<DocumentsWrapper> SubDocuments { get; set; }
+
         /// <summary>
         /// Generates a path for a html file from GitPath. Path also includes the correct file name
         /// with a .html extension
