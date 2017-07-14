@@ -120,6 +120,11 @@ namespace DocsGenerator
             return docsList;
         }
 
+        /// <summary>
+        /// Generates a list of <typeparamref name="DocumentsWrapper"/>s ordered alphabetically (both files and directories in the same list)
+        /// </summary>
+        /// <param name="dirPath"> Path of the directory. </param>
+        /// <returns> List of <typeparamref name="DocumentsWrapper"/>s. </returns>
         private static List<DocumentsWrapper> generateAlphabeticalDocsList(string dirPath)
         {
             List<DocumentsWrapper> docsList = new List<DocumentsWrapper>();
@@ -145,6 +150,11 @@ namespace DocsGenerator
             return docsList;
         }
 
+        /// <summary>
+        /// Reads the whole file to find a line witch gives a title.
+        /// </summary>
+        /// <param name="filePath"> Path of the file. </param>
+        /// <returns> Title if found, null otherwise. </returns>
         private static string getTitleFromFile(string filePath)
         {
             if (!File.Exists(filePath)) return string.Empty;
@@ -160,6 +170,13 @@ namespace DocsGenerator
             return string.Empty;
         }
 
+        /// <summary>
+        /// Parses given string to get title and file name from it. If no fileName is given in the string,
+        /// then it is generated from the given title as a directory name.
+        /// </summary>
+        /// <param name="input"> String to be parsed. </param>
+        /// <param name="title"> Where title will be stored. </param>
+        /// <param name="fileName"> Where filename will be stored. </param>
         private static void getTitleAndFilenameFromString(string input, out string title, out string fileName)
         {
             if (input.Contains("("))
@@ -175,6 +192,11 @@ namespace DocsGenerator
             
         }
 
+        /// <summary>
+        /// Counts the amount of hashes on the begining of the given string
+        /// </summary>
+        /// <param name="input">String to be counted.</param>
+        /// <returns>Number of hashes on the begining of the string.</returns>
         private static int countHashes(string input)
         {
             int i = 0;
