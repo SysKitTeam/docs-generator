@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DocsGenerator
 {
-    class DocumentsWrapper
+    public class DocumentsWrapper
     {
         public DocumentsWrapper()
         {

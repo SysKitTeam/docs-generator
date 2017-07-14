@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
+
 using System.Threading.Tasks;
 
 namespace DocsGenerator
@@ -58,31 +58,63 @@ namespace DocsGenerator
         private static List<DocumentsWrapper> parseTOC(string dirPath)
         {
             List<DocumentsWrapper> docsList = new List<DocumentsWrapper>();
+            // structureList sluzi za podrsku vise razina naslova (odredjeno po broju '#' u TOC.md)
+            // tu se cuvaju zadnji naslovi za svaku razinu
+            List<DocumentsWrapper> structureList = new List<DocumentsWrapper>();
             using (StreamReader toc = new StreamReader(dirPath + "TOC.md"))
             {
                 string line;
-                Regex regex = new Regex(@"# \[^[a-zA-Z0-9]*\]\(^[a-zA-Z0-9]*\)$");
+                
                 while ((line = toc.ReadLine()) != null)
                 {
                     if (!line.StartsWith("#")) continue;
-                    Match match = regex.Match(line);
+                    
+                    
+
                     DocumentsWrapper doc = new DocumentsWrapper();
-                    doc.Title = match.Groups[0].Value;
-                    doc.fileName = match.Groups[1].Value;
-                    // Check if it is a directory or a file:
-                    if (File.Exists(dirPath + doc.fileName))
+                    string title, fileName;
+                    getTitleAndFilenameFromString(line, out title, out fileName);
+                    doc.Title = title;
+                    doc.fileName = fileName;
+                    if (fileName.EndsWith(".md"))
                     {
-                        doc.GitPath = dirPath + doc.fileName;
-                        doc.IsDirectory = false;
+                        // Check if it is a directory or a file:
+                        if (File.Exists(dirPath + doc.fileName))
+                        {
+                            doc.GitPath = dirPath + doc.fileName;
+                            doc.IsDirectory = false;
+                        }
+                        else
+                        {
+                            int indexOfDotmd = doc.fileName.LastIndexOf('.');
+                            doc.fileName = doc.fileName.Remove(indexOfDotmd) + @"\";
+                            doc.IsDirectory = true;
+                            doc.GitPath = dirPath + doc.fileName;
+                        }
                     }
-                    else
+                    int hashcount = countHashes(line);
+                    if (hashcount == structureList.Count) // no changes in level, just add doc where needed and replace last one in structureList
                     {
-                        int indexOfDotmd = doc.fileName.LastIndexOf('.');
-                        doc.fileName = doc.fileName.Remove(indexOfDotmd) + @"\";
-                        doc.IsDirectory = true;
-                        doc.GitPath = dirPath + doc.fileName;
+                        if (hashcount > 1) structureList[hashcount - 2].SubDocuments.Add(doc);
+                        else docsList.Add(doc);
+                        structureList[hashcount - 1] = doc;
+                    } else if (hashcount > structureList.Count()) // one level added
+                    {
+                        structureList[hashcount - 2].SubDocuments.Add(doc);
+                        structureList.Add(doc);
                     }
-                    docsList.Add(doc);
+                    else // one or more levels removed
+                    {
+                        structureList.RemoveRange(hashcount, structureList.Count - (hashcount - 1));
+                        if (hashcount > 1)
+                        {
+                            structureList[hashcount - 2].SubDocuments.Add(doc);
+                        } else
+                        {
+                            docsList.Add(doc);
+                        }
+                        structureList[hashcount - 1] = doc;
+                    }
                 }
             }
             return docsList;
@@ -110,7 +142,7 @@ namespace DocsGenerator
                     docsList.Add(currentDoc);
                 }
             }
-            throw new NotImplementedException();
+            return docsList;
         }
 
         private static string getTitleFromFile(string filePath)
@@ -126,6 +158,31 @@ namespace DocsGenerator
                 }
             }
             return string.Empty;
+        }
+
+        private static void getTitleAndFilenameFromString(string input, out string title, out string fileName)
+        {
+            if (input.Contains("("))
+            {
+                string[] parts = input.Split(']');
+                title = parts[0].Substring(3);
+                fileName = parts[1].Replace(")", "").Substring(1);
+            } else
+            {
+                title = input.Substring(countHashes(input));
+                fileName = title.ToLower().Replace(' ', '-') + "\\";
+            }
+            
+        }
+
+        private static int countHashes(string input)
+        {
+            int i = 0;
+            while (input[i].Equals('#'))
+            {
+                i++;
+            }
+            return i;
         }
     }
 }
