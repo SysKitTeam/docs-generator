@@ -39,21 +39,21 @@ namespace DocsGenerator
 
                 // Step 3: Generate single pdf from given files
                 Console.WriteLine("Generating pdf...");
-                if (!HtmlToPdfParser.GeneratePdf(docsList, outputPath))
+                if (!HtmlToPdfParser.GeneratePdf(docsList, outputPath, tmpPath + @"DocsGenerator\"))
                 {
                     throw new Exception("Something went wrong with parsing html to pdf.");
                 }
                 Console.WriteLine("");
-                if (Directory.Exists(tmpPath + @"DocsGenerator\"))
-                {
-                    Directory.Delete(tmpPath + @"DocsGenerator\");
-                }
+                //if (Directory.Exists(tmpPath + @"DocsGenerator\"))
+                //{
+                //    DeleteDirectory(tmpPath + @"DocsGenerator\");
+                //}
             } finally
             {
-                if (Directory.Exists(tmpPath + @"DocsGenerator\"))
-                {
-                    DeleteDirectory(tmpPath + @"DocsGenerator\");
-                }
+                //if (Directory.Exists(tmpPath + @"DocsGenerator\"))
+                //{
+                //    DeleteDirectory(tmpPath + @"DocsGenerator\");
+                //}
             }
             
 

@@ -10,9 +10,9 @@ namespace DocsGenerator
 {
     class HtmlToPdfParser
     {
-        public static bool GeneratePdf(List<DocumentsWrapper> docsList, string outputPath)
+        public static bool GeneratePdf(List<DocumentsWrapper> docsList, string outputPath, string tmpDirPath)
         {
-            string tmpFile = Path.GetTempFileName();
+            string tmpFile = tmpDirPath + "ALL.html";
             generateSingleHtmlFile(docsList, tmpFile);
             toPdf(tmpFile, outputPath);
             return true;
