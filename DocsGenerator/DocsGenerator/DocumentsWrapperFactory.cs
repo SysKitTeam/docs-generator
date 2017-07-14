@@ -91,6 +91,9 @@ namespace DocsGenerator
                             doc.IsDirectory = true;
                             doc.GitPath = dirPath + doc.fileName;
                         }
+                    } else
+                    {
+                        doc.IsDirectory = true;
                     }
                     int hashcount = countHashes(line);
                     if (hashcount == structureList.Count) // no changes in level, just add doc where needed and replace last one in structureList
@@ -100,12 +103,19 @@ namespace DocsGenerator
                         structureList[hashcount - 1] = doc;
                     } else if (hashcount > structureList.Count()) // one level added
                     {
-                        structureList[hashcount - 2].SubDocuments.Add(doc);
+                        if (hashcount > 1)
+                        {
+                            structureList[hashcount - 2].SubDocuments.Add(doc);
+                        } else
+                        {
+                            docsList.Add(doc);
+                        }
+                        
                         structureList.Add(doc);
                     }
                     else // one or more levels removed
                     {
-                        structureList.RemoveRange(hashcount, structureList.Count - (hashcount - 1));
+                        structureList.RemoveRange(hashcount, structureList.Count - hashcount);
                         if (hashcount > 1)
                         {
                             structureList[hashcount - 2].SubDocuments.Add(doc);

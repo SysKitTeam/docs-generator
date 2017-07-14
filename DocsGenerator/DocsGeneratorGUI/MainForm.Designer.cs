@@ -33,9 +33,9 @@
             this.tbInputPath = new System.Windows.Forms.TextBox();
             this.tbOutputPath = new System.Windows.Forms.TextBox();
             this.gbAfter = new System.Windows.Forms.GroupBox();
-            this.rbtnDoNothing = new System.Windows.Forms.RadioButton();
-            this.rbtnFileExplorer = new System.Windows.Forms.RadioButton();
             this.rbtnDefaultViewer = new System.Windows.Forms.RadioButton();
+            this.rbtnFileExplorer = new System.Windows.Forms.RadioButton();
+            this.rbtnDoNothing = new System.Windows.Forms.RadioButton();
             this.btnBrowse = new System.Windows.Forms.Button();
             this.btnGenerate = new System.Windows.Forms.Button();
             this.lblError = new System.Windows.Forms.Label();
@@ -86,16 +86,15 @@
             this.gbAfter.TabStop = false;
             this.gbAfter.Text = "After generating:";
             // 
-            // rbtnDoNothing
+            // rbtnDefaultViewer
             // 
-            this.rbtnDoNothing.AutoSize = true;
-            this.rbtnDoNothing.Location = new System.Drawing.Point(6, 21);
-            this.rbtnDoNothing.Name = "rbtnDoNothing";
-            this.rbtnDoNothing.Size = new System.Drawing.Size(98, 21);
-            this.rbtnDoNothing.TabIndex = 0;
-            this.rbtnDoNothing.TabStop = true;
-            this.rbtnDoNothing.Text = "Do nothing";
-            this.rbtnDoNothing.UseVisualStyleBackColor = true;
+            this.rbtnDefaultViewer.AutoSize = true;
+            this.rbtnDefaultViewer.Location = new System.Drawing.Point(7, 76);
+            this.rbtnDefaultViewer.Name = "rbtnDefaultViewer";
+            this.rbtnDefaultViewer.Size = new System.Drawing.Size(202, 21);
+            this.rbtnDefaultViewer.TabIndex = 2;
+            this.rbtnDefaultViewer.Text = "Open file in default browser";
+            this.rbtnDefaultViewer.UseVisualStyleBackColor = true;
             // 
             // rbtnFileExplorer
             // 
@@ -104,20 +103,20 @@
             this.rbtnFileExplorer.Name = "rbtnFileExplorer";
             this.rbtnFileExplorer.Size = new System.Drawing.Size(161, 21);
             this.rbtnFileExplorer.TabIndex = 1;
-            this.rbtnFileExplorer.TabStop = true;
             this.rbtnFileExplorer.Text = "Open in File Explorer";
             this.rbtnFileExplorer.UseVisualStyleBackColor = true;
             // 
-            // rbtnDefaultViewer
+            // rbtnDoNothing
             // 
-            this.rbtnDefaultViewer.AutoSize = true;
-            this.rbtnDefaultViewer.Location = new System.Drawing.Point(7, 76);
-            this.rbtnDefaultViewer.Name = "rbtnDefaultViewer";
-            this.rbtnDefaultViewer.Size = new System.Drawing.Size(202, 21);
-            this.rbtnDefaultViewer.TabIndex = 2;
-            this.rbtnDefaultViewer.TabStop = true;
-            this.rbtnDefaultViewer.Text = "Open file in default browser";
-            this.rbtnDefaultViewer.UseVisualStyleBackColor = true;
+            this.rbtnDoNothing.AutoSize = true;
+            this.rbtnDoNothing.Checked = true;
+            this.rbtnDoNothing.Location = new System.Drawing.Point(6, 21);
+            this.rbtnDoNothing.Name = "rbtnDoNothing";
+            this.rbtnDoNothing.Size = new System.Drawing.Size(98, 21);
+            this.rbtnDoNothing.TabIndex = 0;
+            this.rbtnDoNothing.TabStop = true;
+            this.rbtnDoNothing.Text = "Do nothing";
+            this.rbtnDoNothing.UseVisualStyleBackColor = true;
             // 
             // btnBrowse
             // 
