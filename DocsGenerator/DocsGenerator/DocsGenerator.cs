@@ -16,7 +16,7 @@ namespace DocsGenerator
         {
             string tmpPath = Path.GetTempPath();
             gitPath = tmpPath + @"DocsGenerator\gitdownloads\";
-
+            clearOldData(tmpPath + @"DocsGenerator\");
             try
             {
                 // Step 1: Fetch files
@@ -66,6 +66,14 @@ namespace DocsGenerator
             string result = Repository.Clone(gitUrl, outputPath);
             if (String.IsNullOrEmpty(result)) return false;
             else return true;
+        }
+
+        private static void clearOldData(string path)
+        {
+            if (Directory.Exists(path))
+            {
+                DeleteDirectory(path);
+            }
         }
 
         public static void DeleteDirectory(string target_dir)
