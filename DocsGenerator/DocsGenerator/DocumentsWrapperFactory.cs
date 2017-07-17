@@ -109,6 +109,7 @@ namespace DocsGenerator
                             {
                                 continue;
                             }
+                            structureList[hashcount - 2].SubDocuments.Add(doc);
                             structureList[hashcount - 1] = doc;
                         } else
                         {
@@ -130,6 +131,7 @@ namespace DocsGenerator
                             {
                                 continue;
                             }
+                            structureList[hashcount - 2].SubDocuments.Add(doc);
                             structureList[hashcount - 1] = doc;
                         } else
                         {
