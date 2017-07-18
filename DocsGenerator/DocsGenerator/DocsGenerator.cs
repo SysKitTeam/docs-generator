@@ -12,9 +12,12 @@ namespace DocsGenerator
     public class DocsGenerator
     {
         private static string gitPath;
-        public static void GenerateDocs(string gitUrl, string outputPath)
+        public static void GenerateDocs(string gitUrl, string outputPath, string tmpPath = null)
         {
-            string tmpPath = Path.GetTempPath();
+            if (string.IsNullOrEmpty(tmpPath))
+            {
+                tmpPath = Path.GetTempPath();
+            }
             gitPath = tmpPath + @"DocsGenerator\gitdownloads\";
             clearOldData(tmpPath + @"DocsGenerator\");
             try
