@@ -15,7 +15,6 @@ namespace DocsGenerator
         public string Title { get; set; }
         public string fileName { get; set; }
         public string GitPath { get; set; }
-        public string PdfPath { get; set; }
         public string HtmlPath { get; set; }
         public bool IsDirectory { get; set; }
         public List<DocumentsWrapper> SubDocuments { get; set; }
@@ -47,27 +46,6 @@ namespace DocsGenerator
             }
         }
 
-        public string GeneratePdfPath(bool setInternally = false)
-        {
-            if (String.IsNullOrEmpty(GitPath)) return string.Empty;
-            int i = GitPath.LastIndexOf('\\');
-            if (!IsDirectory)
-            {
-                string shortFileName = fileName.Substring(0, fileName.LastIndexOf('.'));
-                if (setInternally)
-                {
-                    PdfPath = GitPath.Substring(0, i + 1) + shortFileName + ".pdf";
-                }
-                return GitPath.Substring(0, i + 1) + shortFileName + ".pdf";
-            }
-            else
-            {
-                if (setInternally)
-                {
-                    PdfPath = GitPath.Substring(0, i + 1) + fileName + ".pdf";
-                }
-                return GitPath.Substring(0, i + 1) + fileName + ".pdf";
-            }
-        }
+        
     }
 }
