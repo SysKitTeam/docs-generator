@@ -11,9 +11,11 @@ namespace DocsGenerator
     class DocumentsWrapperFactory
     {
         static List<string> processedPaths = new List<string>();
+        static List<DocumentsWrapper> unprocessedDocuments;
         public static List<DocumentsWrapper> GenerateDocumentsWrapperListFromPath(string rootDir)
         {
             processedPaths = new List<string>();
+            unprocessedDocuments = new List<DocumentsWrapper>();
             List<DocumentsWrapper> docsList = new List<DocumentsWrapper>();
             if (File.Exists(rootDir + "TOC.md"))
             {
@@ -83,7 +85,15 @@ namespace DocsGenerator
                     {
                         if (hashcount > 1) // if it is 'just another' level:
                         {
-                            doc = analyzeFileOrFolder(fileName, doc, structureList.Last().GitPath);
+                            try
+                            {
+                                doc = analyzeFileOrFolder(fileName, doc, structureList.Last().GitPath);
+                            } catch (Exception exc)
+                            {
+                                unprocessedDocuments.Add(doc);
+                                continue;
+                            }
+                            
                             if (processedPaths.Contains(doc.GitPath))
                             {
                                 continue;
@@ -92,7 +102,15 @@ namespace DocsGenerator
                             structureList.Add(doc);
                         } else // if it is the first level of structure
                         {
-                            doc = analyzeFileOrFolder(fileName, doc, dirPath);
+                            try
+                            {
+                                doc = analyzeFileOrFolder(fileName, doc, dirPath);
+                            } catch (Exception exc)
+                            {
+                                unprocessedDocuments.Add(doc);
+                                continue;
+                            }
+                            
                             if (processedPaths.Contains(doc.GitPath))
                             {
                                 continue;
@@ -104,7 +122,15 @@ namespace DocsGenerator
                     {
                         if (hashcount > 1)
                         {
-                            doc = analyzeFileOrFolder(fileName, doc, structureList[hashcount - 2].GitPath);
+                            try
+                            {
+                                doc = analyzeFileOrFolder(fileName, doc, structureList[hashcount - 2].GitPath);
+                            } catch (Exception exc)
+                            {
+                                unprocessedDocuments.Add(doc);
+                                continue;
+                            }
+                            
                             if (processedPaths.Contains(doc.GitPath))
                             {
                                 continue;
@@ -113,7 +139,15 @@ namespace DocsGenerator
                             structureList[hashcount - 1] = doc;
                         } else
                         {
-                            doc = analyzeFileOrFolder(fileName, doc, dirPath);
+                            try
+                            {
+                                doc = analyzeFileOrFolder(fileName, doc, dirPath);
+                            } catch (Exception exc)
+                            {
+                                unprocessedDocuments.Add(doc);
+                                continue;
+                            }
+                            
                             if (processedPaths.Contains(doc.GitPath))
                             {
                                 continue;
@@ -126,7 +160,15 @@ namespace DocsGenerator
                         structureList.RemoveRange(hashcount, structureList.Count - hashcount);
                         if (hashcount > 1)
                         {
-                            doc = analyzeFileOrFolder(fileName, doc, structureList[hashcount - 2].GitPath);
+                            try
+                            {
+                                doc = analyzeFileOrFolder(fileName, doc, structureList[hashcount - 2].GitPath);
+                            } catch (Exception exc)
+                            {
+                                unprocessedDocuments.Add(doc);
+                                continue;
+                            }
+                            
                             if (processedPaths.Contains(doc.GitPath))
                             {
                                 continue;
@@ -135,7 +177,15 @@ namespace DocsGenerator
                             structureList[hashcount - 1] = doc;
                         } else
                         {
-                            doc = analyzeFileOrFolder(fileName, doc, dirPath);
+                            try
+                            {
+                                doc = analyzeFileOrFolder(fileName, doc, dirPath);
+                            } catch (Exception exc)
+                            {
+                                unprocessedDocuments.Add(doc);
+                                continue;
+                            }
+                            
                             if (processedPaths.Contains(doc.GitPath))
                             {
                                 continue;
@@ -163,7 +213,7 @@ namespace DocsGenerator
                 {
                     int indexOfDotmd = fileName.LastIndexOf('.');
                     doc.fileName = fileName.Remove(indexOfDotmd) + @"\";
-                    if (!Directory.Exists(relativePath + doc.fileName)) throw new IOException("Wrong assumption.");
+                    if (!Directory.Exists(relativePath + doc.fileName)) throw new Exception("Wrong assumption.");
                     doc.GitPath = relativePath + doc.fileName;
                     doc.IsDirectory = true;
                 }
