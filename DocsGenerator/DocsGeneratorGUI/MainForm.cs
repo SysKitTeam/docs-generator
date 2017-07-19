@@ -14,11 +14,14 @@ namespace DocsGeneratorGUI
     public partial class MainForm : Form
     {
         private string errorMessage = string.Empty;
+        private List<string> unprocessedDocumentsDetails;
         public MainForm()
         {
             InitializeComponent();
             errorMessage = string.Empty;
             lblError.Text = string.Empty;
+            linkLblUnprocessed.Visible = false;
+            unprocessedDocumentsDetails = new List<string>();
         }
 
         private void btnBrowse_Click(object sender, EventArgs e)
@@ -38,7 +41,18 @@ namespace DocsGeneratorGUI
             {
 
                 DocsGenerator.DocsGenerator generator = new DocsGenerator.DocsGenerator();
-                generator.GenerateDocs(tbInputPath.Text, tbOutputPath.Text);
+                try
+                {
+                    generator.GenerateDocs(tbInputPath.Text, tbOutputPath.Text);
+                } catch (Exception exc)
+                {
+                    MessageBox.Show(exc.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                if (generator.HasUnprocessedDocuments())
+                {
+                    linkLblUnprocessed.Visible = true;
+                    unprocessedDocumentsDetails = generator.getUnprocessedDocumentsDetails();
+                }
             }
             else
             {
@@ -81,6 +95,12 @@ namespace DocsGeneratorGUI
             }
 
             return true;
+        }
+
+        private void linkLblUnprocessed_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            UnprocessedDocumentsForm udForm = new UnprocessedDocumentsForm(unprocessedDocumentsDetails);
+            udForm.ShowDialog();
         }
     }
 }

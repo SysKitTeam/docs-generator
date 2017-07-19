@@ -23,7 +23,7 @@ namespace DocsGenerator
         /// Generates a path for a html file from GitPath. Path also includes the correct file name
         /// with a .html extension
         /// </summary>
-        /// <param name="setInternally">If true, given value is also stored to HtmlPath property.</param>
+        /// <param name="setInternally">If true, given value is also stored to HtmlPath property of the object.</param>
         /// <returns>Path for html file.</returns>
         public string GenerateHtmlPath(bool setInternally = false)
         {

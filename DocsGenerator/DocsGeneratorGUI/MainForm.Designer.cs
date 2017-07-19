@@ -39,6 +39,8 @@
             this.btnBrowse = new System.Windows.Forms.Button();
             this.btnGenerate = new System.Windows.Forms.Button();
             this.lblError = new System.Windows.Forms.Label();
+            this.linkLblUnprocessed = new System.Windows.Forms.LinkLabel();
+            this.lblStatus = new System.Windows.Forms.Label();
             this.gbAfter.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -64,14 +66,14 @@
             // 
             this.tbInputPath.Location = new System.Drawing.Point(121, 28);
             this.tbInputPath.Name = "tbInputPath";
-            this.tbInputPath.Size = new System.Drawing.Size(266, 22);
+            this.tbInputPath.Size = new System.Drawing.Size(304, 22);
             this.tbInputPath.TabIndex = 2;
             // 
             // tbOutputPath
             // 
             this.tbOutputPath.Location = new System.Drawing.Point(121, 56);
             this.tbOutputPath.Name = "tbOutputPath";
-            this.tbOutputPath.Size = new System.Drawing.Size(266, 22);
+            this.tbOutputPath.Size = new System.Drawing.Size(304, 22);
             this.tbOutputPath.TabIndex = 3;
             // 
             // gbAfter
@@ -81,7 +83,7 @@
             this.gbAfter.Controls.Add(this.rbtnDoNothing);
             this.gbAfter.Location = new System.Drawing.Point(30, 134);
             this.gbAfter.Name = "gbAfter";
-            this.gbAfter.Size = new System.Drawing.Size(234, 122);
+            this.gbAfter.Size = new System.Drawing.Size(234, 111);
             this.gbAfter.TabIndex = 4;
             this.gbAfter.TabStop = false;
             this.gbAfter.Text = "After generating:";
@@ -120,7 +122,7 @@
             // 
             // btnBrowse
             // 
-            this.btnBrowse.Location = new System.Drawing.Point(393, 56);
+            this.btnBrowse.Location = new System.Drawing.Point(431, 54);
             this.btnBrowse.Name = "btnBrowse";
             this.btnBrowse.Size = new System.Drawing.Size(83, 26);
             this.btnBrowse.TabIndex = 5;
@@ -130,9 +132,9 @@
             // 
             // btnGenerate
             // 
-            this.btnGenerate.Location = new System.Drawing.Point(270, 205);
+            this.btnGenerate.Location = new System.Drawing.Point(273, 195);
             this.btnGenerate.Name = "btnGenerate";
-            this.btnGenerate.Size = new System.Drawing.Size(206, 51);
+            this.btnGenerate.Size = new System.Drawing.Size(241, 51);
             this.btnGenerate.TabIndex = 6;
             this.btnGenerate.Text = "Generate!";
             this.btnGenerate.UseVisualStyleBackColor = true;
@@ -149,12 +151,34 @@
             this.lblError.TabIndex = 7;
             this.lblError.Text = "lblError";
             // 
+            // linkLblUnprocessed
+            // 
+            this.linkLblUnprocessed.AutoSize = true;
+            this.linkLblUnprocessed.Location = new System.Drawing.Point(270, 134);
+            this.linkLblUnprocessed.Name = "linkLblUnprocessed";
+            this.linkLblUnprocessed.Size = new System.Drawing.Size(245, 17);
+            this.linkLblUnprocessed.TabIndex = 8;
+            this.linkLblUnprocessed.TabStop = true;
+            this.linkLblUnprocessed.Text = "Some documents were not processed";
+            this.linkLblUnprocessed.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLblUnprocessed_LinkClicked);
+            // 
+            // lblStatus
+            // 
+            this.lblStatus.AutoSize = true;
+            this.lblStatus.Location = new System.Drawing.Point(270, 175);
+            this.lblStatus.Name = "lblStatus";
+            this.lblStatus.Size = new System.Drawing.Size(62, 17);
+            this.lblStatus.TabIndex = 9;
+            this.lblStatus.Text = "lblStatus";
+            // 
             // MainForm
             // 
             this.AcceptButton = this.btnGenerate;
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(503, 268);
+            this.ClientSize = new System.Drawing.Size(526, 261);
+            this.Controls.Add(this.lblStatus);
+            this.Controls.Add(this.linkLblUnprocessed);
             this.Controls.Add(this.lblError);
             this.Controls.Add(this.btnGenerate);
             this.Controls.Add(this.btnBrowse);
@@ -185,6 +209,8 @@
         private System.Windows.Forms.Button btnBrowse;
         private System.Windows.Forms.Button btnGenerate;
         private System.Windows.Forms.Label lblError;
+        private System.Windows.Forms.LinkLabel linkLblUnprocessed;
+        private System.Windows.Forms.Label lblStatus;
     }
 }
 

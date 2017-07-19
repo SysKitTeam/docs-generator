@@ -29,9 +29,26 @@ namespace DocsGeneratorConsole
 
             Console.WriteLine("Generating...");
             DocsGenerator.DocsGenerator generator = new DocsGenerator.DocsGenerator();
-            generator.GenerateDocs(args[0], args[1]);
-            Console.WriteLine("Pdf generated.");
+            try
+            {
+                generator.GenerateDocs(args[0], args[1]);
+            }
+            catch (Exception exc)
+            {
+                Console.WriteLine("Error generating docs. Error message:");
+                Console.WriteLine(exc.Message);
+                return;
+            }
             
+            Console.WriteLine("Pdf generated.");
+            if (generator.HasUnprocessedDocuments())
+            {
+                Console.WriteLine("Some documents were not processed:");
+                foreach(string line in generator.getUnprocessedDocumentsDetails())
+                {
+                    Console.WriteLine(line);
+                }
+            }
         }
     }
 }

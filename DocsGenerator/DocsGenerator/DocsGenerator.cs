@@ -12,6 +12,7 @@ namespace DocsGenerator
     public class DocsGenerator
     {
         private string gitPath;
+        private List<DocumentsWrapper> unprocessedDocuments;
         public void GenerateDocs(string gitUrl, string outputPath, string tmpPath = null)
         {
             if (string.IsNullOrEmpty(tmpPath))
@@ -23,33 +24,30 @@ namespace DocsGenerator
             try
             {
                 // Step 1: Fetch files
-                Console.WriteLine("Fetching files from GitHub...");
+                
                 if (!GetGitDirectories(gitUrl, gitPath))
                 {
-                    Console.WriteLine("Error fetching git files.");
-                    return;
+                    throw new Exception("Error fetching files. Given URL: " + gitUrl);
                 }
-                Console.WriteLine("Files fetched.\n");
 
                 // Step 2: Parse all .md files to html format (with editing)
-                Console.WriteLine("Parsing .md to html format...");
                 DocumentsWrapperFactory docFactory = new DocumentsWrapperFactory();
                 List<DocumentsWrapper> docsList = docFactory.GenerateDocumentsWrapperListFromPath(gitPath);
+                unprocessedDocuments = docFactory.UnprocessedDocuments;
                 MdToHtmlParser mdToHtmlParser = new MdToHtmlParser();
                 if (!mdToHtmlParser.parseAllFiles(ref docsList))
                 {
                     throw new Exception("Something went wrong with parsing md to html.");
                 }
-                Console.WriteLine("Html files created.");
 
                 // Step 3: Generate single pdf from given files
-                Console.WriteLine("Generating pdf...");
                 HtmlToPdfParser htmlToPdfParser = new HtmlToPdfParser();
+
                 if (!htmlToPdfParser.GeneratePdf(docsList, outputPath, tmpPath + @"DocsGenerator\"))
                 {
                     throw new Exception("Something went wrong with parsing html to pdf.");
                 }
-                Console.WriteLine("");
+
                 //if (Directory.Exists(tmpPath + @"DocsGenerator\"))
                 //{
                 //    DeleteDirectory(tmpPath + @"DocsGenerator\");
@@ -80,6 +78,30 @@ namespace DocsGenerator
             {
                 DeleteDirectory(path);
             }
+        }
+
+        public bool HasUnprocessedDocuments()
+        {
+            if (unprocessedDocuments == null) return false;
+            if (unprocessedDocuments.Count > 1) return true;
+            else return false;
+        }
+
+        public List<string> getUnprocessedDocumentsDetails()
+        {
+            if (!HasUnprocessedDocuments()) return new List<string>();
+            List<string> details = new List<string>();
+            StringBuilder sb = new StringBuilder();
+            foreach(DocumentsWrapper doc in unprocessedDocuments)
+            {
+                if (!string.IsNullOrEmpty(doc.Title)) sb.Append("Title: " + doc.Title);
+                if (!string.IsNullOrEmpty(doc.GitPath)) sb.Append(" Path: " + doc.GitPath);
+                else if (!string.IsNullOrEmpty(doc.fileName)) sb.Append(" File name: " + doc.fileName);
+                if (sb.Length < 1) sb.Append("Unknown file.");
+                details.Add(sb.ToString());
+                sb.Clear();
+            }
+            return details;
         }
 
         public static void DeleteDirectory(string target_dir)

@@ -11,11 +11,11 @@ namespace DocsGenerator
     class DocumentsWrapperFactory
     {
         List<string> processedPaths = new List<string>();
-        List<DocumentsWrapper> unprocessedDocuments;
+        public List<DocumentsWrapper> UnprocessedDocuments;
         public List<DocumentsWrapper> GenerateDocumentsWrapperListFromPath(string rootDir)
         {
             processedPaths = new List<string>();
-            unprocessedDocuments = new List<DocumentsWrapper>();
+            UnprocessedDocuments = new List<DocumentsWrapper>();
             List<DocumentsWrapper> docsList = new List<DocumentsWrapper>();
             if (File.Exists(rootDir + "TOC.md"))
             {
@@ -90,7 +90,7 @@ namespace DocsGenerator
                                 doc = analyzeFileOrFolder(fileName, doc, structureList.Last().GitPath);
                             } catch (Exception exc)
                             {
-                                unprocessedDocuments.Add(doc);
+                                UnprocessedDocuments.Add(doc);
                                 continue;
                             }
                             
@@ -107,7 +107,7 @@ namespace DocsGenerator
                                 doc = analyzeFileOrFolder(fileName, doc, dirPath);
                             } catch (Exception exc)
                             {
-                                unprocessedDocuments.Add(doc);
+                                UnprocessedDocuments.Add(doc);
                                 continue;
                             }
                             
@@ -127,7 +127,7 @@ namespace DocsGenerator
                                 doc = analyzeFileOrFolder(fileName, doc, structureList[hashcount - 2].GitPath);
                             } catch (Exception exc)
                             {
-                                unprocessedDocuments.Add(doc);
+                                UnprocessedDocuments.Add(doc);
                                 continue;
                             }
                             
@@ -144,7 +144,7 @@ namespace DocsGenerator
                                 doc = analyzeFileOrFolder(fileName, doc, dirPath);
                             } catch (Exception exc)
                             {
-                                unprocessedDocuments.Add(doc);
+                                UnprocessedDocuments.Add(doc);
                                 continue;
                             }
                             
@@ -165,7 +165,7 @@ namespace DocsGenerator
                                 doc = analyzeFileOrFolder(fileName, doc, structureList[hashcount - 2].GitPath);
                             } catch (Exception exc)
                             {
-                                unprocessedDocuments.Add(doc);
+                                UnprocessedDocuments.Add(doc);
                                 continue;
                             }
                             
@@ -182,7 +182,7 @@ namespace DocsGenerator
                                 doc = analyzeFileOrFolder(fileName, doc, dirPath);
                             } catch (Exception exc)
                             {
-                                unprocessedDocuments.Add(doc);
+                                UnprocessedDocuments.Add(doc);
                                 continue;
                             }
                             
