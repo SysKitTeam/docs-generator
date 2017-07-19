@@ -298,12 +298,13 @@ namespace DocsGenerator
             if (input.Contains("("))
             {
                 string[] parts = input.Split(']');
-                title = parts[0].Substring(3);
-                fileName = parts[1].Replace(")", "").Substring(1);
+                title = parts[0].Substring(3).Trim();
+                fileName = parts[1].Replace(")", "").Substring(1).Trim();
             } else
             {
-                title = input.Substring(countHashes(input) + 1);
+                title = input.Substring(countHashes(input) + 1).Trim();
                 fileName = title.Trim().ToLower().Replace(' ', '-') + "\\";
+                fileName = fileName.Trim();
             }
             
         }
