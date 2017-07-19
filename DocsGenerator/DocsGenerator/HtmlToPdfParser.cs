@@ -10,7 +10,7 @@ namespace DocsGenerator
 {
     class HtmlToPdfParser
     {
-        public static bool GeneratePdf(List<DocumentsWrapper> docsList, string outputPath, string tmpDirPath)
+        public bool GeneratePdf(List<DocumentsWrapper> docsList, string outputPath, string tmpDirPath)
         {
             string tmpFile = tmpDirPath + "ALL.html";
             generateSingleHtmlFile(docsList, tmpFile);
@@ -18,7 +18,7 @@ namespace DocsGenerator
             return true;
         }
 
-        public static void generateSingleHtmlFile(List<DocumentsWrapper> docsList, string outputFile)
+        public void generateSingleHtmlFile(List<DocumentsWrapper> docsList, string outputFile)
         {
             using (StreamWriter writer = new StreamWriter(outputFile))
             {
@@ -27,7 +27,7 @@ namespace DocsGenerator
             
         }
 
-        private static void appendText(string inputFile, StreamWriter outputWriter)
+        private void appendText(string inputFile, StreamWriter outputWriter)
         {
             using (StreamReader reader = new StreamReader(inputFile))
             {
@@ -39,7 +39,7 @@ namespace DocsGenerator
             }
         }
 
-        private static void recursiveDocumentWriter(List<DocumentsWrapper> docsList, StreamWriter writer)
+        private void recursiveDocumentWriter(List<DocumentsWrapper> docsList, StreamWriter writer)
         {
             foreach (DocumentsWrapper doc in docsList)
             {
@@ -54,7 +54,7 @@ namespace DocsGenerator
             }
         }
 
-        private static bool toPdf(string inputHtmlPath, string outputPdfPath)
+        private bool toPdf(string inputHtmlPath, string outputPdfPath)
         {
             ProcessStartInfo startInfo = new ProcessStartInfo();
             startInfo.FileName = "wkhtmltopdf.exe";

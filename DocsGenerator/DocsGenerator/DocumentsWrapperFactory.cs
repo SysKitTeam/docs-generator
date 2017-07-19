@@ -10,9 +10,9 @@ namespace DocsGenerator
 {
     class DocumentsWrapperFactory
     {
-        static List<string> processedPaths = new List<string>();
-        static List<DocumentsWrapper> unprocessedDocuments;
-        public static List<DocumentsWrapper> GenerateDocumentsWrapperListFromPath(string rootDir)
+        List<string> processedPaths = new List<string>();
+        List<DocumentsWrapper> unprocessedDocuments;
+        public List<DocumentsWrapper> GenerateDocumentsWrapperListFromPath(string rootDir)
         {
             processedPaths = new List<string>();
             unprocessedDocuments = new List<DocumentsWrapper>();
@@ -37,7 +37,7 @@ namespace DocsGenerator
             return docsList;
         }
 
-        private static void docsFillRecursive(ref DocumentsWrapper docsDir)
+        private void docsFillRecursive(ref DocumentsWrapper docsDir)
         {
             // Check for TOC:
             if (File.Exists(docsDir.GitPath + "TOC.md"))
@@ -61,7 +61,7 @@ namespace DocsGenerator
             }
         }
 
-        public static List<DocumentsWrapper> parseTOC(string dirPath)
+        public List<DocumentsWrapper> parseTOC(string dirPath)
         {
             List<DocumentsWrapper> docsList = new List<DocumentsWrapper>();
             // u structureList se dodaje zadnji dokument (ili folder) svake razine do sad, s tim da ako se u nekom trenutku
@@ -199,7 +199,7 @@ namespace DocsGenerator
             return docsList;
         }
 
-        private static DocumentsWrapper analyzeFileOrFolder(string fileName, DocumentsWrapper doc, string relativePath)
+        private DocumentsWrapper analyzeFileOrFolder(string fileName, DocumentsWrapper doc, string relativePath)
         {
             if (fileName.EndsWith(".md"))
             {
@@ -239,7 +239,7 @@ namespace DocsGenerator
         /// </summary>
         /// <param name="dirPath"> Path of the directory. </param>
         /// <returns> List of <typeparamref name="DocumentsWrapper"/>s. </returns>
-        private static List<DocumentsWrapper> generateAlphabeticalDocsList(string dirPath)
+        private List<DocumentsWrapper> generateAlphabeticalDocsList(string dirPath)
         {
             List<DocumentsWrapper> docsList = new List<DocumentsWrapper>();
             IEnumerable<string> allFiles = Directory.EnumerateFileSystemEntries(dirPath).OrderBy(s => s);
@@ -269,7 +269,7 @@ namespace DocsGenerator
         /// </summary>
         /// <param name="filePath"> Path of the file. </param>
         /// <returns> Title if found, null otherwise. </returns>
-        private static string getTitleFromFile(string filePath)
+        private string getTitleFromFile(string filePath)
         {
             if (!File.Exists(filePath)) return string.Empty;
             using (StreamReader sr = new StreamReader(filePath))
@@ -293,7 +293,7 @@ namespace DocsGenerator
         /// <param name="input"> String to be parsed. </param>
         /// <param name="title"> Where title will be stored. </param>
         /// <param name="fileName"> Where filename will be stored. </param>
-        private static void getTitleAndFilenameFromString(string input, out string title, out string fileName)
+        private void getTitleAndFilenameFromString(string input, out string title, out string fileName)
         {
             if (input.Contains("("))
             {
@@ -313,7 +313,7 @@ namespace DocsGenerator
         /// </summary>
         /// <param name="input">String to be counted.</param>
         /// <returns>Number of hashes on the begining of the string.</returns>
-        private static int countHashes(string input)
+        private int countHashes(string input)
         {
             int i = 0;
             while (input[i].Equals('#'))

@@ -11,8 +11,8 @@ namespace DocsGenerator
 {
     public class DocsGenerator
     {
-        private static string gitPath;
-        public static void GenerateDocs(string gitUrl, string outputPath, string tmpPath = null)
+        private string gitPath;
+        public void GenerateDocs(string gitUrl, string outputPath, string tmpPath = null)
         {
             if (string.IsNullOrEmpty(tmpPath))
             {
@@ -33,8 +33,10 @@ namespace DocsGenerator
 
                 // Step 2: Parse all .md files to html format (with editing)
                 Console.WriteLine("Parsing .md to html format...");
-                List<DocumentsWrapper> docsList = DocumentsWrapperFactory.GenerateDocumentsWrapperListFromPath(gitPath);
-                if (!MdToHtmlParser.parseAllFiles(ref docsList))
+                DocumentsWrapperFactory docFactory = new DocumentsWrapperFactory();
+                List<DocumentsWrapper> docsList = docFactory.GenerateDocumentsWrapperListFromPath(gitPath);
+                MdToHtmlParser mdToHtmlParser = new MdToHtmlParser();
+                if (!mdToHtmlParser.parseAllFiles(ref docsList))
                 {
                     throw new Exception("Something went wrong with parsing md to html.");
                 }
@@ -42,7 +44,8 @@ namespace DocsGenerator
 
                 // Step 3: Generate single pdf from given files
                 Console.WriteLine("Generating pdf...");
-                if (!HtmlToPdfParser.GeneratePdf(docsList, outputPath, tmpPath + @"DocsGenerator\"))
+                HtmlToPdfParser htmlToPdfParser = new HtmlToPdfParser();
+                if (!htmlToPdfParser.GeneratePdf(docsList, outputPath, tmpPath + @"DocsGenerator\"))
                 {
                     throw new Exception("Something went wrong with parsing html to pdf.");
                 }
@@ -64,14 +67,14 @@ namespace DocsGenerator
 
         
         // TODO: move to separate class?
-        private static bool GetGitDirectories(string gitUrl, string outputPath)
+        private bool GetGitDirectories(string gitUrl, string outputPath)
         {
             string result = Repository.Clone(gitUrl, outputPath);
             if (String.IsNullOrEmpty(result)) return false;
             else return true;
         }
 
-        private static void clearOldData(string path)
+        private void clearOldData(string path)
         {
             if (Directory.Exists(path))
             {

@@ -36,7 +36,9 @@ namespace DocsGeneratorGUI
 
             if (validate())
             {
-                DocsGenerator.DocsGenerator.GenerateDocs(tbInputPath.Text, tbOutputPath.Text);
+
+                DocsGenerator.DocsGenerator generator = new DocsGenerator.DocsGenerator();
+                generator.GenerateDocs(tbInputPath.Text, tbOutputPath.Text);
             }
             else
             {

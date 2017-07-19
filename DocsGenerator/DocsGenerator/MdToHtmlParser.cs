@@ -10,7 +10,7 @@ namespace DocsGenerator
     class MdToHtmlParser
     {
         
-        public static bool parseAllFiles(ref List<DocumentsWrapper> docsList)
+        public bool parseAllFiles(ref List<DocumentsWrapper> docsList)
         {
             
             for( int i = 0; i < docsList.Count; i++)
@@ -34,7 +34,7 @@ namespace DocsGenerator
         /// Prepares md file for conversion to html. This method will overwrite the old md file.
         /// </summary>
         /// <param name="path">Path of the md file to be edited.</param>
-        private static void editMdFile(string path)
+        private void editMdFile(string path)
         {
             string tempFile = Path.GetTempFileName();
 
@@ -77,7 +77,7 @@ namespace DocsGenerator
             File.Move(tempFile, path);
         }
 
-        private static void htmlFilePostProcess(string path, int level)
+        private void htmlFilePostProcess(string path, int level)
         {
             string titleHeaderTag = "<h" + level + ">";
             string otherHeaderTag = "<h" + (level + 1) + ">";
@@ -120,7 +120,7 @@ namespace DocsGenerator
             File.Move(tempFile, path);
         }
 
-        private static void parseRecursive(ref DocumentsWrapper doc, int level)
+        private void parseRecursive(ref DocumentsWrapper doc, int level)
         {
             if (!doc.IsDirectory)
             {
@@ -138,7 +138,7 @@ namespace DocsGenerator
             }
         }
 
-        private static void parseFileToHtml(ref DocumentsWrapper doc)
+        private void parseFileToHtml(ref DocumentsWrapper doc)
         {
             using (var reader = new System.IO.StreamReader(doc.GitPath))
             using (var writer = new System.IO.StreamWriter(doc.GenerateHtmlPath(true)))

@@ -28,7 +28,8 @@ namespace DocsGeneratorConsole
             }
 
             Console.WriteLine("Generating...");
-            DocsGenerator.DocsGenerator.GenerateDocs(args[0], args[1]);
+            DocsGenerator.DocsGenerator generator = new DocsGenerator.DocsGenerator();
+            generator.GenerateDocs(args[0], args[1]);
             Console.WriteLine("Pdf generated.");
             
         }
