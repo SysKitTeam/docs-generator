@@ -21,6 +21,7 @@ namespace DocsGeneratorGUI
             errorMessage = string.Empty;
             lblError.Text = string.Empty;
             linkLblUnprocessed.Visible = false;
+            lblStatus.Text = string.Empty;
             unprocessedDocumentsDetails = new List<string>();
         }
 
@@ -35,8 +36,9 @@ namespace DocsGeneratorGUI
 
         private void btnGenerate_Click(object sender, EventArgs e)
         {
+            linkLblUnprocessed.Visible = false;
             lblError.Text = string.Empty;
-
+            lblStatus.Text = "Processing...";
             if (validate())
             {
 
@@ -47,7 +49,10 @@ namespace DocsGeneratorGUI
                 } catch (Exception exc)
                 {
                     MessageBox.Show(exc.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    lblStatus.Text = "Error.";
+                    return;
                 }
+                lblStatus.Text = "Done!";
                 if (generator.HasUnprocessedDocuments())
                 {
                     linkLblUnprocessed.Visible = true;
@@ -56,6 +61,7 @@ namespace DocsGeneratorGUI
             }
             else
             {
+                lblStatus.Text = "Failed.";
                 lblError.Text = errorMessage;
                 return;
             }
