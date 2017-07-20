@@ -48,6 +48,10 @@ namespace DocsGenerator
                     throw new Exception("Something went wrong with parsing html to pdf.");
                 }
 
+                if (!File.Exists(outputPath))
+                {
+                    throw new Exception("Error using wkhtml to create pdf document.");
+                }
                 //if (Directory.Exists(tmpPath + @"DocsGenerator\"))
                 //{
                 //    DeleteDirectory(tmpPath + @"DocsGenerator\");
