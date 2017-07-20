@@ -89,28 +89,18 @@ namespace DocsGenerator
             using (StreamWriter writer = new StreamWriter(tempFile))
             {
                 string line;
-                bool firstHeader = true;
+                //bool firstHeader = true;
                 while((line = reader.ReadLine()) != null)
                 {
-                    if (line.Contains("<h2>"))
+                    if (line.Contains("<h2>") && line.Contains("</h2>"))
                     {
-                        if (firstHeader)
-                        {
-                            line.Replace("<h2>", titleHeaderTag);
-                        } else
-                        {
-                            line.Replace("<h2>", otherHeaderTag);
-                        }
-                    } else if (line.Contains("</h2>"))
+                        line = line.Replace("<h2>", titleHeaderTag + "<font face=\"Arial\" size=\"8\" color=\"#eca11d\">");
+                        line = line.Replace("</h2>", "</font>" + titleHeaderEndTag);
+                    }
+                    else if (line.Contains("<h3>") && line.Contains("</h3>"))
                     {
-                        if (firstHeader)
-                        {
-                            line.Replace("</h2>", titleHeaderEndTag);
-                            firstHeader = false;
-                        } else
-                        {
-                            line.Replace("</h2>", otherHeaderEndTag);
-                        }
+                        line = line.Replace("<h3>", "<p><b><font face=\"Helvetica\" size=\"7\">");
+                        line = line.Replace("</h3>", "</font></b></p>");
                     }
                     writer.WriteLine(line);
                 }

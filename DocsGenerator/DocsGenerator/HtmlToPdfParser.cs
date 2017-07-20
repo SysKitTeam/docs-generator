@@ -22,12 +22,14 @@ namespace DocsGenerator
         {
             using (StreamWriter writer = new StreamWriter(outputFile))
             {
-                recursiveDocumentWriter(docsList, writer);
+                writer.WriteLine("<font face=\"Helvetica\" size=\"6\">");
+                recursiveDocumentWriter(docsList, writer, 1);
+                writer.WriteLine("</font>");
             }
             
         }
 
-        private void appendText(string inputFile, StreamWriter outputWriter)
+        private void appendText(string inputFile, StreamWriter outputWriter, int level)
         {
             using (StreamReader reader = new StreamReader(inputFile))
             {
@@ -39,17 +41,24 @@ namespace DocsGenerator
             }
         }
 
-        private void recursiveDocumentWriter(List<DocumentsWrapper> docsList, StreamWriter writer)
+        private void appendDirectoryTitle(DocumentsWrapper doc, StreamWriter writer, int level)
+        {
+            string line = "<h" + level + "><font face=\"Arial\" size=\"10\" color=\"#eca11d\">" + doc.Title + "</font></h" + level + ">";
+            writer.WriteLine(line);
+        }
+
+        private void recursiveDocumentWriter(List<DocumentsWrapper> docsList, StreamWriter writer, int level)
         {
             foreach (DocumentsWrapper doc in docsList)
             {
                 if (!doc.IsDirectory)
                 {
-                    appendText(doc.HtmlPath, writer);
+                    appendText(doc.HtmlPath, writer, level);
                 }
                 else
                 {
-                    recursiveDocumentWriter(doc.SubDocuments, writer);
+                    appendDirectoryTitle(doc, writer, level);
+                    recursiveDocumentWriter(doc.SubDocuments, writer, level + 1);
                 }
             }
         }
