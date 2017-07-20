@@ -99,8 +99,13 @@ namespace DocsGenerator
                     }
                     else if (line.Contains("<h3>") && line.Contains("</h3>"))
                     {
-                        line = line.Replace("<h3>", "<p><b><font face=\"Helvetica\" size=\"7\">");
+                        line = line.Replace("<h3>", "<p><b><font face=\"Helvetica\" size=\"7\" color=\"#eca11d\">");
                         line = line.Replace("</h3>", "</font></b></p>");
+                    }
+                    else if (line.Contains("<h4>") && line.Contains("</h4>"))
+                    {
+                        line = line.Replace("<h4>", "<p><b><font face=\"Helvetica\" size=\"6\" color=\"#eca11d\">");
+                        line = line.Replace("</h4>", "</font></b></p>");
                     }
                     writer.WriteLine(line);
                 }

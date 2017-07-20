@@ -28,6 +28,7 @@ namespace DocsGeneratorGUI
         private void btnBrowse_Click(object sender, EventArgs e)
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "PDF files (*.pdf) | *.pdf";
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
                 tbOutputPath.Text = saveFileDialog.FileName;
