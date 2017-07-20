@@ -68,6 +68,12 @@ namespace DocsGenerator
                     }
                     else // other:
                     {
+                        // because a header and a line starting with '##' are both translated to <h2> using wkhtmltopdf,
+                        // all lines begining with at least two ## will be appended to an aditional '#' so there will be no conflicts
+                        if (line.StartsWith("##"))
+                        {
+                            line = "#" + line;
+                        }
                         writer.WriteLine(line);
                     }
                 }
@@ -104,8 +110,12 @@ namespace DocsGenerator
                     }
                     else if (line.Contains("<h4>") && line.Contains("</h4>"))
                     {
-                        line = line.Replace("<h4>", "<p><b><font face=\"Helvetica\" size=\"6\" color=\"#eca11d\">");
-                        line = line.Replace("</h4>", "</font></b></p>");
+                        line = line.Replace("<h4>", "<p><font face=\"Helvetica\" size=\"6\" color=\"#eca11d\">");
+                        line = line.Replace("</h4>", "</font></p>");
+                    } else if (line.Contains("<h5>") && line.Contains("</h5>"))
+                    {
+                        line = line.Replace("<h5>", "<p><font face =\"Helvetica\" size=\"6\" color=\"#eca11d\">");
+                        line = line.Replace("</h5>", "</font></p>");
                     }
                     writer.WriteLine(line);
                 }

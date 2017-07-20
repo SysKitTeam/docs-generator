@@ -10,11 +10,11 @@ namespace DocsGenerator
 {
     class HtmlToPdfParser
     {
-        public bool GeneratePdf(List<DocumentsWrapper> docsList, string outputPath, string tmpDirPath)
+        public bool GeneratePdf(List<DocumentsWrapper> docsList, string outputPath, string tmpDirPath, string documentTitle)
         {
             string tmpFile = tmpDirPath + "ALL.html";
             generateSingleHtmlFile(docsList, tmpFile);
-            toPdf(tmpFile, outputPath);
+            toPdf(tmpFile, outputPath, documentTitle);
             return true;
         }
 
@@ -63,11 +63,17 @@ namespace DocsGenerator
             }
         }
 
-        private bool toPdf(string inputHtmlPath, string outputPdfPath)
+        private bool toPdf(string inputHtmlPath, string outputPdfPath, string documentTitle)
         {
             ProcessStartInfo startInfo = new ProcessStartInfo();
             startInfo.FileName = "wkhtmltopdf.exe";
-            startInfo.Arguments = "toc " + inputHtmlPath + " " + outputPdfPath;
+            startInfo.Arguments = "--header-left " + documentTitle + " " +
+                                  "--header-right [page]/[topage] " +
+                                  "--header-line " +
+                                  "--header-spacing 2 " +
+                                  "toc " + 
+                                  inputHtmlPath + " " + 
+                                  outputPdfPath;
             startInfo.UseShellExecute = false;
             startInfo.RedirectStandardOutput = true;
 

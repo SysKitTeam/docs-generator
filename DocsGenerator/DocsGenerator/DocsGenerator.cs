@@ -42,8 +42,8 @@ namespace DocsGenerator
 
                 // Step 3: Generate single pdf from given files
                 HtmlToPdfParser htmlToPdfParser = new HtmlToPdfParser();
-
-                if (!htmlToPdfParser.GeneratePdf(docsList, outputPath, tmpPath + @"DocsGenerator\"))
+                string title = getDocumentTitle(gitPath);
+                if (!htmlToPdfParser.GeneratePdf(docsList, outputPath, tmpPath + @"DocsGenerator\", title))
                 {
                     throw new Exception("Something went wrong with parsing html to pdf.");
                 }
@@ -102,6 +102,39 @@ namespace DocsGenerator
                 sb.Clear();
             }
             return details;
+        }
+
+        private string getDocumentTitle(string rootpath)
+        {
+            if (File.Exists(rootpath + "README.md"))
+            {
+                using (StreamReader reader = new StreamReader(rootpath + "README.md"))
+                {
+                    string line;
+                    while((line = reader.ReadLine()) != null)
+                    {
+                        if (line.StartsWith("# "))
+                        {
+                            return line.Substring(2);
+                        }
+                    }
+                }
+            }
+            if (File.Exists(rootpath + "index.md"))
+            {
+                using (StreamReader reader = new StreamReader(rootpath + "index.md"))
+                {
+                    string line;
+                    while((line = reader.ReadLine()) != null)
+                    {
+                        if (line.StartsWith("title: "))
+                        {
+                            return line.Substring(7);
+                        }
+                    }
+                }
+            }
+            return string.Empty;
         }
 
         public static void DeleteDirectory(string target_dir)
