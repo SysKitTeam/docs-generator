@@ -13,6 +13,7 @@ namespace DocsGenerator
         public bool GeneratePdf(List<DocumentsWrapper> docsList, string outputPath, string tmpDirPath, string documentTitle)
         {
             string tmpFile = tmpDirPath + "ALL.html";
+            copyCSSfile(tmpDirPath);
             generateSingleHtmlFile(docsList, tmpFile);
             toPdf(tmpFile, outputPath, documentTitle);
             return true;
@@ -24,14 +25,15 @@ namespace DocsGenerator
             {
                 //writer.WriteLine("<font face=\"Helvetica\" size=\"6\">");
                 writer.WriteLine("<head>");
-                writer.WriteLine("   <link rel=\"stylesheet\"");
-                writer.WriteLine("         href=\"https://fonts.googleapis.com/css?family=Open+Sans\" />");
-                writer.WriteLine("   <style>");
-                writer.WriteLine("      body {");
-                writer.WriteLine("         font-family: 'Open Sans', Arial, sans-serif;");
-                writer.WriteLine("         font-size: 48 px;");
-                writer.WriteLine("      }");
-                writer.WriteLine("   </style>");
+                writer.WriteLine("<link rel=\"stylesheet\" type=\"text/css\" href=\"./style.css\" >");
+                //writer.WriteLine("   <link rel=\"stylesheet\"");
+                //writer.WriteLine("         href=\"https://fonts.googleapis.com/css?family=Open+Sans\" />");
+                //writer.WriteLine("   <style>");
+                //writer.WriteLine("      body {");
+                //writer.WriteLine("         font-family: 'Open Sans', Arial, sans-serif;");
+                //writer.WriteLine("         font-size: 48 px;");
+                //writer.WriteLine("      }");
+                //writer.WriteLine("   </style>");
                 writer.WriteLine("</head>");
                 writer.WriteLine("<body>");
                 recursiveDocumentWriter(docsList, writer, 1);
@@ -39,6 +41,11 @@ namespace DocsGenerator
                 //writer.WriteLine("</font>");
             }
             
+        }
+
+        private void copyCSSfile(string outputPath)
+        {
+            File.Copy(".\\style.css", outputPath + "style.css");
         }
 
         private void appendText(string inputFile, StreamWriter outputWriter, int level)
