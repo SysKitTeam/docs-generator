@@ -13,7 +13,7 @@ namespace DocsGenerator
     {
         private string gitPath;
         private List<DocumentsWrapper> unprocessedDocuments;
-        public void GenerateDocs(string gitUrl, string outputPath, string tmpPath = null)
+        public void GenerateDocs(string gitUrl, string outputPath, string branchName, string tmpPath = null)
         {
             if (string.IsNullOrEmpty(tmpPath))
             {
@@ -25,7 +25,7 @@ namespace DocsGenerator
             {
                 // Step 1: Fetch files
                 
-                if (!GetGitDirectories(gitUrl, gitPath))
+                if (!GetGitDirectories(gitUrl, gitPath, branchName))
                 {
                     throw new Exception("Error fetching files. Given URL: " + gitUrl);
                 }
@@ -69,9 +69,17 @@ namespace DocsGenerator
 
         
         // TODO: move to separate class?
-        private bool GetGitDirectories(string gitUrl, string outputPath)
+        private bool GetGitDirectories(string gitUrl, string outputPath, string branchName)
         {
-            string result = Repository.Clone(gitUrl, outputPath);
+            string result;
+            if (string.IsNullOrEmpty(branchName))
+            {
+                result = Repository.Clone(gitUrl, outputPath);
+            } else
+            {
+                CloneOptions options = new CloneOptions();
+                result = Repository.Clone(gitUrl, outputPath, options);
+            }
             if (String.IsNullOrEmpty(result)) return false;
             else return true;
         }
