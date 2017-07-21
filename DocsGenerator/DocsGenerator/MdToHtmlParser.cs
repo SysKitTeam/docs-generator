@@ -117,6 +117,10 @@ namespace DocsGenerator
                         line = line.Replace("<h5>", "<p><font face =\"Helvetica\" size=\"6\" color=\"#eca11d\">");
                         line = line.Replace("</h5>", "</font></p>");
                     }
+                    if (line.Contains("<img src"))
+                    {
+                        line = line.Replace("#img", "./gitdownloads/_assets");
+                    }
                     writer.WriteLine(line);
                 }
             }

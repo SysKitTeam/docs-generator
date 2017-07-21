@@ -20,11 +20,23 @@ namespace DocsGenerator
 
         public void generateSingleHtmlFile(List<DocumentsWrapper> docsList, string outputFile)
         {
-            using (StreamWriter writer = new StreamWriter(outputFile))
+            using (StreamWriter writer = new StreamWriter(outputFile, false, Encoding.UTF8))
             {
-                writer.WriteLine("<font face=\"Helvetica\" size=\"6\">");
+                //writer.WriteLine("<font face=\"Helvetica\" size=\"6\">");
+                writer.WriteLine("<head>");
+                writer.WriteLine("   <link rel=\"stylesheet\"");
+                writer.WriteLine("         href=\"https://fonts.googleapis.com/css?family=Open+Sans\" />");
+                writer.WriteLine("   <style>");
+                writer.WriteLine("      body {");
+                writer.WriteLine("         font-family: 'Open Sans', Arial, sans-serif;");
+                writer.WriteLine("         font-size: 48 px;");
+                writer.WriteLine("      }");
+                writer.WriteLine("   </style>");
+                writer.WriteLine("</head>");
+                writer.WriteLine("<body>");
                 recursiveDocumentWriter(docsList, writer, 1);
-                writer.WriteLine("</font>");
+                writer.WriteLine("</body>");
+                //writer.WriteLine("</font>");
             }
             
         }
