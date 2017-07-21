@@ -10,9 +10,9 @@ namespace DocsGeneratorConsole
     {
         static void Main(string[] args)
         {
-            if (args.Length != 2)
+            if (args.Length < 2)
             {
-                Console.WriteLine("Usage: DocsGeneratorConsole <input url> <output path>");
+                Console.WriteLine("Usage: DocsGeneratorConsole <input url> <output path> <branch name (optional)>");
                 return;
             }
             
@@ -31,7 +31,15 @@ namespace DocsGeneratorConsole
             DocsGenerator.DocsGenerator generator = new DocsGenerator.DocsGenerator();
             try
             {
-                generator.GenerateDocs(args[0], args[1]);
+                if (args.Length > 2)
+                {
+                    generator.GenerateDocs(args[0], args[1], args[2]);
+                }
+                else
+                {
+                    generator.GenerateDocs(args[0], args[1], string.Empty);
+                }
+                
             }
             catch (Exception exc)
             {
