@@ -110,8 +110,8 @@ namespace DocsGenerator
                     }
                     else if (line.Contains("<h4>") && line.Contains("</h4>"))
                     {
-                        line = line.Replace("<h4>", "<p><font face=\"Helvetica\" size=\"6\" color=\"#eca11d\">");
-                        line = line.Replace("</h4>", "</font></p>");
+                        line = line.Replace("<h4>", "<p><b><font face=\"Helvetica\" size=\"6\" color=\"#eca11d\">");
+                        line = line.Replace("</h4>", "</font></b></p>");
                     } else if (line.Contains("<h5>") && line.Contains("</h5>"))
                     {
                         line = line.Replace("<h5>", "<p><font face =\"Helvetica\" size=\"6\" color=\"#eca11d\">");
