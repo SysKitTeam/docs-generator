@@ -21,49 +21,36 @@ namespace DocsGenerator
             }
             gitPath = tmpPath + @"DocsGenerator\gitdownloads\";
             clearOldData(tmpPath + @"DocsGenerator\");
-            try
+            // Step 1: Fetch files
+
+            if (!GetGitDirectories(gitUrl, gitPath, branchName))
             {
-                // Step 1: Fetch files
-                
-                if (!GetGitDirectories(gitUrl, gitPath, branchName))
-                {
-                    throw new Exception("Error fetching files. Given URL: " + gitUrl);
-                }
-
-                // Step 2: Parse all .md files to html format (with editing)
-                DocumentsWrapperFactory docFactory = new DocumentsWrapperFactory();
-                List<DocumentsWrapper> docsList = docFactory.GenerateDocumentsWrapperListFromPath(gitPath);
-                unprocessedDocuments = docFactory.UnprocessedDocuments;
-                MdToHtmlParser mdToHtmlParser = new MdToHtmlParser();
-                if (!mdToHtmlParser.parseAllFiles(ref docsList))
-                {
-                    throw new Exception("Something went wrong with parsing md to html.");
-                }
-
-                // Step 3: Generate single pdf from given files
-                HtmlToPdfParser htmlToPdfParser = new HtmlToPdfParser();
-                string title = getDocumentTitle(gitPath);
-                if (!htmlToPdfParser.GeneratePdf(docsList, outputPath, tmpPath + @"DocsGenerator\", title))
-                {
-                    throw new Exception("Something went wrong with parsing html to pdf.");
-                }
-
-                if (!File.Exists(outputPath))
-                {
-                    throw new Exception("Error using wkhtml to create pdf document.");
-                }
-                //if (Directory.Exists(tmpPath + @"DocsGenerator\"))
-                //{
-                //    DeleteDirectory(tmpPath + @"DocsGenerator\");
-                //}
-            } finally
-            {
-                //if (Directory.Exists(tmpPath + @"DocsGenerator\"))
-                //{
-                //    DeleteDirectory(tmpPath + @"DocsGenerator\");
-                //}
+                throw new Exception("Error fetching files. Given URL: " + gitUrl);
             }
-            
+
+            // Step 2: Parse all .md files to html format (with editing)
+            DocumentsWrapperFactory docFactory = new DocumentsWrapperFactory();
+            List<DocumentsWrapper> docsList = docFactory.GenerateDocumentsWrapperListFromPath(gitPath);
+            unprocessedDocuments = docFactory.UnprocessedDocuments;
+            MdToHtmlParser mdToHtmlParser = new MdToHtmlParser();
+            if (!mdToHtmlParser.parseAllFiles(ref docsList))
+            {
+                throw new Exception("Something went wrong with parsing md to html.");
+            }
+
+            // Step 3: Generate single pdf from given files
+            HtmlToPdfParser htmlToPdfParser = new HtmlToPdfParser();
+            string title = getDocumentTitle(gitPath);
+            if (!htmlToPdfParser.GeneratePdf(docsList, outputPath, tmpPath + @"DocsGenerator\", title))
+            {
+                throw new Exception("Something went wrong with parsing html to pdf.");
+            }
+
+            if (!File.Exists(outputPath))
+            {
+                throw new Exception("Error using wkhtml to create pdf document.");
+            }
+
 
         }
 
