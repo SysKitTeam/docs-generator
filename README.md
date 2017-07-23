@@ -13,7 +13,7 @@ the downloaded git documentation. <br />
 While generating the pdf file, this file is copied to the working tmp directory with all the other html 
 files that are used in file generation (header, footer and cover .html files, described down below). This way, the same style.css file can
 be used in all html files by adding this line to `<head>`: <br/>
-`<link rel=\"stylesheet\" type=\"text/css\" href=\"./style.css\" >`
+`<link rel="stylesheet" type="text/css" href="./style.css" >`
 
 ### Header and footer
 Using wkhtmltopdf it is possible to add a html header and footer to the pdf. Header and footer can be edited in the header.html and 
