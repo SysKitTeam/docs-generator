@@ -18,13 +18,13 @@ namespace DocsGenerator
                 DocumentsWrapper doc = docsList[i];
                 if (!doc.IsDirectory)
                 {
-                    editMdFile(doc.GitPath);
+                    editMdFile(doc.GitPath, (i + 1) + ".");
                     parseFileToHtml(ref doc);
                     htmlFilePostProcess(doc.HtmlPath, 1);
                 }
                 else
                 {
-                    parseRecursive(ref doc, 2);
+                    parseRecursive(ref doc, 2, (i + 1) + ".");
                 }
             }
             return true;
@@ -34,7 +34,7 @@ namespace DocsGenerator
         /// Prepares md file for conversion to html. This method will overwrite the old md file.
         /// </summary>
         /// <param name="path">Path of the md file to be edited.</param>
-        private void editMdFile(string path)
+        private void editMdFile(string path, string numberTitle)
         {
             string tempFile = Path.GetTempFileName();
 
@@ -63,7 +63,7 @@ namespace DocsGenerator
                     {
                         if (line.StartsWith("title:"))
                         {
-                            writer.WriteLine(line.Substring(6));
+                            writer.WriteLine(numberTitle + " " + line.Substring(6));
                         }
                     }
                     else // other:
@@ -129,20 +129,21 @@ namespace DocsGenerator
             File.Move(tempFile, path);
         }
 
-        private void parseRecursive(ref DocumentsWrapper doc, int level)
+        private void parseRecursive(ref DocumentsWrapper doc, int level, string numberTitle)
         {
             if (!doc.IsDirectory)
             {
-                editMdFile(doc.GitPath);
+                editMdFile(doc.GitPath, numberTitle);
                 parseFileToHtml(ref doc);
                 htmlFilePostProcess(doc.HtmlPath, level);
             }
             else
             {
+                doc.TitleNumber = numberTitle;
                 for (int i = 0; i < doc.SubDocuments.Count; i++)
                 {
                     DocumentsWrapper subDoc = doc.SubDocuments[i];
-                    parseRecursive(ref subDoc, level + 1);
+                    parseRecursive(ref subDoc, level + 1, numberTitle + (i + 1) + ".");
                 }
             }
         }

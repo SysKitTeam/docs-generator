@@ -58,7 +58,6 @@ namespace DocsGenerator
         // TODO: move to separate class?
         private bool GetGitDirectories(string gitUrl, string outputPath, string branchName)
         {
-            if (!Repository.IsValid(gitUrl)) throw new Exception("Given url is not a valid GitHub repository.");
             string result;
             if (string.IsNullOrEmpty(branchName))
             {

@@ -135,7 +135,7 @@ namespace DocsGenerator
         /// <param name="level">Header level.</param>
         private void appendDirectoryTitle(DocumentsWrapper doc, StreamWriter writer, int level)
         {
-            string line = "<h" + level + "><font face=\"Arial\" size=\"10\" color=\"#eca11d\">" + doc.Title + "</font></h" + level + ">";
+            string line = "<h" + level + "><font face=\"Arial\" size=\"10\" color=\"#eca11d\">" + doc.TitleNumber + " " + doc.Title + "</font></h" + level + ">";
             writer.WriteLine(line);
         }
 

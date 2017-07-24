@@ -17,6 +17,7 @@ namespace DocsGenerator
         public string GitPath { get; set; }
         public string HtmlPath { get; set; }
         public bool IsDirectory { get; set; }
+        public string TitleNumber { get; set; }
         public List<DocumentsWrapper> SubDocuments { get; set; }
 
         /// <summary>
