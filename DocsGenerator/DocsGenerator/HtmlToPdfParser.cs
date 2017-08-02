@@ -18,14 +18,14 @@ namespace DocsGenerator
         /// <param name="tmpDirPath">Path of a temporary directory for mid-calculation file storage.</param>
         /// <param name="documentTitle">Title of the document to be created.</param>
         /// <returns>True if pdf generation was successfull, false otherwise.</returns>
-        public bool GeneratePdf(List<DocumentsWrapper> docsList, string outputPath, string tmpDirPath, string documentTitle)
+        public bool GeneratePdf(List<DocumentsWrapper> docsList, string outputPath, string tmpDirPath, string documentTitle, string indexText)
         {
             string tmpFile = tmpDirPath + "ALL.html";
 
             copyCSSfile(tmpDirPath);
             string headerPath = copyHeaderFile(tmpDirPath);
             string footerPath = copyFooterFile(tmpDirPath);
-            string coverPath = copyAndEditCoverFile(tmpDirPath, documentTitle, DateTime.Now);
+            string coverPath = copyAndEditCoverFile(tmpDirPath, documentTitle, DateTime.Now, indexText);
 
             generateSingleHtmlFile(docsList, tmpFile);
             
@@ -86,7 +86,7 @@ namespace DocsGenerator
         /// <param name="documentTitle">Title of the document that will be put in the cover file.</param>
         /// <param name="dateTime">Date parameter that will be put in the cover file.</param>
         /// <returns>Full file path of the new cover.html file.</returns>
-        private string copyAndEditCoverFile(string outputPath, string documentTitle, DateTime dateTime)
+        private string copyAndEditCoverFile(string outputPath, string documentTitle, DateTime dateTime, string indexText)
         {
             using (StreamReader reader = new StreamReader(".\\cover.html"))
             using (StreamWriter writer = new StreamWriter(outputPath + "cover.html"))
@@ -101,6 +101,10 @@ namespace DocsGenerator
                     if (line.Contains("_date_"))
                     {
                         line = line.Replace("_date_", dateTime.ToShortDateString());
+                    }
+                    if (line.Contains("_index_"))
+                    {
+                        line = line.Replace("_index_", indexText);
                     }
                     writer.WriteLine(line);
                 }
@@ -168,7 +172,7 @@ namespace DocsGenerator
         {
             ProcessStartInfo startInfo = new ProcessStartInfo();
             startInfo.FileName = "wkhtmltopdf.exe";
-            startInfo.Arguments = "cover " + coverPath + " " +
+            startInfo.Arguments = " cover " + coverPath + " " +
                                   //"--header-html " + headerPath + " " +
                                   //"--footer-html " + footerPath + " " +
                                   "toc " + 

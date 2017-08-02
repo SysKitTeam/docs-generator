@@ -41,7 +41,8 @@ namespace DocsGenerator
             // Step 3: Generate single pdf from given files
             HtmlToPdfParser htmlToPdfParser = new HtmlToPdfParser();
             string title = getDocumentTitle(gitPath);
-            if (!htmlToPdfParser.GeneratePdf(docsList, outputPath, tmpPath + @"DocsGenerator\", title))
+            string indexText = getIndexText(gitPath);
+            if (!htmlToPdfParser.GeneratePdf(docsList, outputPath, tmpPath + @"DocsGenerator\", title, indexText))
             {
                 throw new Exception("Something went wrong with parsing html to pdf.");
             }
@@ -70,6 +71,42 @@ namespace DocsGenerator
             }
             if (String.IsNullOrEmpty(result)) return false;
             else return true;
+        }
+
+        private string getIndexText(string indexPath)
+        {
+            if (!indexPath.EndsWith("index.md"))
+            {
+                if (File.Exists(indexPath + "index.md"))
+                {
+                    indexPath = indexPath + "index.md";
+                } else if (File.Exists(indexPath + @"\index.md"))
+                {
+                    indexPath = indexPath + @"\index.md";
+                } else
+                {
+                    return string.Empty;
+                }
+            }
+            using (StreamReader reader = new StreamReader(indexPath))
+            {
+                int headerLinesCount = 0;
+                string line;
+                while((line = reader.ReadLine()) != null)
+                {
+                    if (line.StartsWith("---"))
+                    {
+                        headerLinesCount++;
+                        continue;
+                    }
+                    if (headerLinesCount > 1)
+                    {
+                        if (string.IsNullOrEmpty(line)) continue;
+                        else return line;
+                    }
+                }
+            }
+            return string.Empty;
         }
 
         private void clearOldData(string path)
