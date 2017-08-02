@@ -2,7 +2,7 @@
 Tool to convert MD documentation to PDF
 ## Usage
 There are two projects that can be used: DocsGeneratorGUI and DocsGeneratorConsole. DocsGeneratorGUI is a simple WindowsForms application
-with all necessary fields. DocsGeneratorConsole is a simple console application that takes all the needed parameters as arguments.
+with all necessary fields. DocsGeneratorConsole is a simple console application that takes all the needed parameters as arguments. For detailed explanation run DocsGeneratorConsole without arguments and help will be written out (this also applies to cases when wrong number of arguments is given).
 
 ## Design
 This application allows users to give their design of contents, cover page, header and footer.
@@ -25,8 +25,9 @@ Inside the DocsGenerator project is a cover.html file. This html page will be us
 before it is copied to the tmp directory, giving the user options to set automated fields. This table lists possible strings that will be
 parsed.<br />
 
-| String     | Description               |
-| ---------- | ------------------------- |
-| `_title_`  | Represents document title |
-| `_date_`   | Represents current date   |
+| String     | Description                                 |
+| ---------- | ------------------------------------------- |
+| `_title_`  | Represents document title                   |
+| `_date_`   | Represents current date                     |
+| `_index_`  | Represents description from index.md file   |
 
