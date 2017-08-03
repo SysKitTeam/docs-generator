@@ -172,9 +172,9 @@ namespace DocsGenerator
         {
             ProcessStartInfo startInfo = new ProcessStartInfo();
             startInfo.FileName = "wkhtmltopdf.exe";
-            startInfo.Arguments = " cover " + coverPath + " " +
-                                  //"--header-html " + headerPath + " " +
-                                  //"--footer-html " + footerPath + " " +
+            startInfo.Arguments = "--header-html " + headerPath + " " +
+                                  "--footer-html " + footerPath + " " +
+                                  " cover " + coverPath + " " +
                                   "toc " + 
                                   inputHtmlPath + " " + 
                                   outputPdfPath;
