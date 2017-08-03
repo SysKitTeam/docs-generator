@@ -103,8 +103,8 @@ namespace DocsGenerator
                         line = line.Replace("<h2>", titleHeaderTag);
                         line = line.Replace("</h2>", titleHeaderEndTag);
                     }
-                    else if (line.Contains("<h3>") && line.Contains("</h3>"))
-                    {
+                    else if (line.Contains("<h3>") && line.Contains("</h3>"))   // headers greater than level 3 are replaced with <p> because
+                    {                                                           // wkhtmltopdf puts all the headers in the table of contents
                         line = line.Replace("<h3>", "<p>");
                         line = line.Replace("</h3>", "</p>");
                     }
