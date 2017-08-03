@@ -100,22 +100,22 @@ namespace DocsGenerator
                 {
                     if (line.Contains("<h2>") && line.Contains("</h2>"))
                     {
-                        line = line.Replace("<h2>", titleHeaderTag + "<font face=\"Arial\" size=\"8\" color=\"#eca11d\">");
-                        line = line.Replace("</h2>", "</font>" + titleHeaderEndTag);
+                        line = line.Replace("<h2>", titleHeaderTag);
+                        line = line.Replace("</h2>", titleHeaderEndTag);
                     }
                     else if (line.Contains("<h3>") && line.Contains("</h3>"))
                     {
-                        line = line.Replace("<h3>", "<p><b><font face=\"Helvetica\" size=\"7\" color=\"#eca11d\">");
-                        line = line.Replace("</h3>", "</font></b></p>");
+                        line = line.Replace("<h3>", "<p>");
+                        line = line.Replace("</h3>", "</p>");
                     }
                     else if (line.Contains("<h4>") && line.Contains("</h4>"))
                     {
-                        line = line.Replace("<h4>", "<p><b><font face=\"Helvetica\" size=\"6\" color=\"#eca11d\">");
-                        line = line.Replace("</h4>", "</font></b></p>");
+                        line = line.Replace("<h4>", "<p>");
+                        line = line.Replace("</h4>", "</p>");
                     } else if (line.Contains("<h5>") && line.Contains("</h5>"))
                     {
-                        line = line.Replace("<h5>", "<p><font face =\"Helvetica\" size=\"6\" color=\"#eca11d\">");
-                        line = line.Replace("</h5>", "</font></p>");
+                        line = line.Replace("<h5>", "<p>");
+                        line = line.Replace("</h5>", "</p>");
                     }
                     if (line.Contains("<img src"))
                     {

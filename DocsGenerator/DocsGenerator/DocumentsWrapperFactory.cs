@@ -12,8 +12,10 @@ namespace DocsGenerator
     {
         List<string> processedPaths = new List<string>();
         public List<DocumentsWrapper> UnprocessedDocuments;
+        private string absoluteRootPath;
         public List<DocumentsWrapper> GenerateDocumentsWrapperListFromPath(string rootDir)
         {
+            absoluteRootPath = rootDir;
             processedPaths = new List<string>();
             UnprocessedDocuments = new List<DocumentsWrapper>();
             List<DocumentsWrapper> docsList = new List<DocumentsWrapper>();
@@ -24,7 +26,7 @@ namespace DocsGenerator
             else
             {
                 return docsList;
-                //generateAlphabeticalDocsList(rootDir);
+                
             }
             for (int i = 0; i < docsList.Count; i++)
             {
@@ -232,36 +234,6 @@ namespace DocsGenerator
                 }
             }
             return doc;
-        }
-
-        /// <summary>
-        /// Generates a list of <typeparamref name="DocumentsWrapper"/>s ordered alphabetically (both files and directories in the same list)
-        /// </summary>
-        /// <param name="dirPath"> Path of the directory. </param>
-        /// <returns> List of <typeparamref name="DocumentsWrapper"/>s. </returns>
-        private List<DocumentsWrapper> generateAlphabeticalDocsList(string dirPath)
-        {
-            List<DocumentsWrapper> docsList = new List<DocumentsWrapper>();
-            IEnumerable<string> allFiles = Directory.EnumerateFileSystemEntries(dirPath).OrderBy(s => s);
-            foreach (string currentPath in allFiles)
-            {
-                if (File.Exists(currentPath))
-                {
-                    DocumentsWrapper currentDoc = new DocumentsWrapper();
-                    currentDoc.Title = getTitleFromFile(currentPath);
-                    currentDoc.GitPath = currentPath;
-                    currentDoc.IsDirectory = false;
-                    docsList.Add(currentDoc);
-                }
-                else
-                {
-                    DocumentsWrapper currentDoc = new DocumentsWrapper();
-                    currentDoc.GitPath = currentPath;
-                    currentDoc.IsDirectory = true;
-                    docsList.Add(currentDoc);
-                }
-            }
-            return docsList;
         }
 
         /// <summary>
