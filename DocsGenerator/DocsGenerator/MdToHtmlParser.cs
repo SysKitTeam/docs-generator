@@ -20,7 +20,7 @@ namespace DocsGenerator
                 {
                     editMdFile(doc.GitPath, (i + 1) + ".");
                     parseFileToHtml(ref doc);
-                    htmlFilePostProcess(doc.HtmlPath, 1);
+                    htmlFilePostProcess(doc.HtmlPath, 1, doc.RelativePath);
                 }
                 else
                 {
@@ -83,7 +83,7 @@ namespace DocsGenerator
             File.Move(tempFile, path);
         }
 
-        private void htmlFilePostProcess(string path, int level)
+        private void htmlFilePostProcess(string path, int level, string relativePath)
         {
             string titleHeaderTag = "<h" + level + ">";
             string otherHeaderTag = "<h" + (level + 1) + ">";
@@ -95,27 +95,49 @@ namespace DocsGenerator
             using (StreamWriter writer = new StreamWriter(tempFile))
             {
                 string line;
-                //bool firstHeader = true;
+                bool firstHeader = true;
                 while((line = reader.ReadLine()) != null)
                 {
+                    string currentHeaderTag;
                     if (line.Contains("<h2>") && line.Contains("</h2>"))
                     {
                         line = line.Replace("<h2>", titleHeaderTag);
                         line = line.Replace("</h2>", titleHeaderEndTag);
+                        if (firstHeader)
+                        {
+                            line = line.Replace(titleHeaderTag, titleHeaderTag.Replace(">", "") + " id=\"internal/" + relativePath + "\">");
+                            firstHeader = false;
+                        }
                     }
                     else if (line.Contains("<h3>") && line.Contains("</h3>"))   // headers greater than level 3 are replaced with <p> because
                     {                                                           // wkhtmltopdf puts all the headers in the table of contents
                         line = line.Replace("<h3>", "<p>");
                         line = line.Replace("</h3>", "</p>");
+                        if (firstHeader)
+                        {
+                            line = line.Replace("<p>", "<p id=\"internal/" + relativePath + "\">");
+                            firstHeader = false;
+                        }
                     }
                     else if (line.Contains("<h4>") && line.Contains("</h4>"))
                     {
                         line = line.Replace("<h4>", "<p>");
                         line = line.Replace("</h4>", "</p>");
+                        if (firstHeader)
+                        {
+                            line = line.Replace("<p>", "<p id=\"internal/" + relativePath + "\">");
+                            firstHeader = false;
+                        }
+
                     } else if (line.Contains("<h5>") && line.Contains("</h5>"))
                     {
                         line = line.Replace("<h5>", "<p>");
                         line = line.Replace("</h5>", "</p>");
+                        if (firstHeader)
+                        {
+                            line = line.Replace("<p>", "<p id=\"internal/" + relativePath + "\">");
+                            firstHeader = false;
+                        }
                     }
                     if (line.Contains("<img src"))
                     {
@@ -135,7 +157,7 @@ namespace DocsGenerator
             {
                 editMdFile(doc.GitPath, numberTitle);
                 parseFileToHtml(ref doc);
-                htmlFilePostProcess(doc.HtmlPath, level);
+                htmlFilePostProcess(doc.HtmlPath, level, doc.RelativePath);
             }
             else
             {

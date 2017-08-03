@@ -210,6 +210,7 @@ namespace DocsGenerator
                     doc.fileName = fileName;
                     doc.GitPath = relativePath + fileName;
                     doc.IsDirectory = false;
+                    doc.RelativePath = doc.GitPath.Replace(absoluteRootPath, "").Replace(".md", "");
                 }
                 else
                 {
@@ -218,6 +219,7 @@ namespace DocsGenerator
                     if (!Directory.Exists(relativePath + doc.fileName)) throw new Exception("Wrong assumption.");
                     doc.GitPath = relativePath + doc.fileName;
                     doc.IsDirectory = true;
+                    doc.RelativePath = doc.GitPath.Replace(absoluteRootPath, "");
                 }
             }
             else
@@ -227,12 +229,14 @@ namespace DocsGenerator
                     doc.fileName = fileName;
                     doc.GitPath = relativePath + fileName;
                     doc.IsDirectory = true;
+                    doc.RelativePath = doc.GitPath.Replace(absoluteRootPath, "");
                 }
                 else
                 {
                     throw new Exception("Error finding referenced file or folder.");
                 }
             }
+            doc.RelativePath = doc.RelativePath.Replace("\\", "/");
             return doc;
         }
 
