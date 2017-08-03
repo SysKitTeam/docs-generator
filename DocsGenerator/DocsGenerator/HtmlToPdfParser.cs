@@ -27,12 +27,17 @@ namespace DocsGenerator
             string footerPath = copyFooterFile(tmpDirPath);
             string coverPath = copyAndEditCoverFile(tmpDirPath, documentTitle, DateTime.Now, indexText);
 
-            generateSingleHtmlFile(docsList, tmpFile);
+            GenerateSingleHtmlFile(docsList, tmpFile);
             
             return toPdf(tmpFile, outputPath, headerPath, footerPath, coverPath); ;
         }
 
-        public void generateSingleHtmlFile(List<DocumentsWrapper> docsList, string outputFile)
+        /// <summary>
+        /// Generates a single html file from all the previously generated html files. Also adds reference to style.css.
+        /// </summary>
+        /// <param name="docsList">List (tree) of document wrappers</param>
+        /// <param name="outputFile">Full output path (with file name and extension).</param>
+        public void GenerateSingleHtmlFile(List<DocumentsWrapper> docsList, string outputFile)
         {
             using (StreamWriter writer = new StreamWriter(outputFile, false, Encoding.UTF8))
             {
@@ -44,6 +49,28 @@ namespace DocsGenerator
                 writer.WriteLine("</body>");
             }
             
+        }
+
+        /// <summary>
+        /// Recursive function used by GenerateSingleHtmlFile method.
+        /// </summary>
+        /// <param name="docsList">List of document wrappers</param>
+        /// <param name="writer">Writer linked to the html file that is being created</param>
+        /// <param name="level">Depth of recursion</param>
+        private void recursiveDocumentWriter(List<DocumentsWrapper> docsList, StreamWriter writer, int level)
+        {
+            foreach (DocumentsWrapper doc in docsList)
+            {
+                if (!doc.IsDirectory)
+                {
+                    appendText(doc.HtmlPath, writer);
+                }
+                else
+                {
+                    appendDirectoryTitle(doc, writer, level);
+                    recursiveDocumentWriter(doc.SubDocuments, writer, level + 1);
+                }
+            }
         }
 
         /// <summary>
@@ -143,21 +170,7 @@ namespace DocsGenerator
             writer.WriteLine(line);
         }
 
-        private void recursiveDocumentWriter(List<DocumentsWrapper> docsList, StreamWriter writer, int level)
-        {
-            foreach (DocumentsWrapper doc in docsList)
-            {
-                if (!doc.IsDirectory)
-                {
-                    appendText(doc.HtmlPath, writer);
-                }
-                else
-                {
-                    appendDirectoryTitle(doc, writer, level);
-                    recursiveDocumentWriter(doc.SubDocuments, writer, level + 1);
-                }
-            }
-        }
+        
 
         /// <summary>
         /// Generates a pdf using wkhtmltopdf with given content, header, footer and cover files to the given output path.
