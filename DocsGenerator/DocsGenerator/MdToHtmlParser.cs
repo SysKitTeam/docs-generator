@@ -143,6 +143,10 @@ namespace DocsGenerator
                     {
                         line = line.Replace("#img", "./gitdownloads/_assets");
                     }
+                    if (line.Contains("<a href=\"#internal/"))
+                    {
+                        line = line.Replace("/\">", "\">");
+                    }
                     writer.WriteLine(line);
                 }
             }
