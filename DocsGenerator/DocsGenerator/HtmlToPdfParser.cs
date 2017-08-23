@@ -26,10 +26,11 @@ namespace DocsGenerator
             string headerPath = copyHeaderFile(tmpDirPath);
             string footerPath = copyFooterFile(tmpDirPath);
             string coverPath = copyAndEditCoverFile(tmpDirPath, documentTitle, DateTime.Now, indexText);
+            string tocXslPath = copyTocXslFile(outputPath);
 
             GenerateSingleHtmlFile(docsList, tmpFile);
             
-            return toPdf(tmpFile, outputPath, headerPath, footerPath, coverPath); ;
+            return toPdf(tmpFile, outputPath, headerPath, footerPath, coverPath, tocXslPath);
         }
 
         /// <summary>
@@ -104,6 +105,12 @@ namespace DocsGenerator
         {
             File.Copy(".\\footer.html", outputPath + "footer.html");
             return outputPath + "footer.html";
+        }
+
+        private string copyTocXslFile(string outputPath)
+        {
+            File.Copy(".\\TOCStyle.xsl", outputPath + "TOCStyle.xsl");
+            return outputPath + "TOCStyle.xsl";
         }
 
         /// <summary>
@@ -181,13 +188,14 @@ namespace DocsGenerator
         /// <param name="footerPath">Path of the footer html file.</param>
         /// <param name="coverPath">Path of the cover html file.</param>
         /// <returns>True if pdf generation was successfull, false otherwise.</returns>
-        private bool toPdf(string inputHtmlPath, string outputPdfPath, string headerPath, string footerPath, string coverPath)
+        private bool toPdf(string inputHtmlPath, string outputPdfPath, string headerPath, string footerPath, string coverPath, string tocXslPath)
         {
             ProcessStartInfo startInfo = new ProcessStartInfo();
             startInfo.FileName = "wkhtmltopdf.exe";
             startInfo.Arguments = "--header-html " + headerPath + " " +
                                   "--footer-html " + footerPath + " " +
                                   " cover " + coverPath + " " +
+                                  "--xsl-style-sheet " + tocXslPath +
                                   "toc " + 
                                   inputHtmlPath + " " + 
                                   outputPdfPath;
