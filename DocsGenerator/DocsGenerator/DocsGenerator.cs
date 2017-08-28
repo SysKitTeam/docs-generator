@@ -11,118 +11,187 @@ namespace DocsGenerator
 {
     public class DocsGenerator
     {
-        string gitPath;
-        string pdfPath;
-        public void GenerateDocs(string gitUrl, string outpuPath)
+        private string gitPath;
+        private List<DocumentsWrapper> unprocessedDocuments;
+        public void GenerateDocs(string gitUrl, string outputPath, string branchName, string version, string tmpPath = null)
         {
-            string tmpPath = Path.GetTempPath();
+            if (string.IsNullOrEmpty(tmpPath))
+            {
+                tmpPath = Path.GetTempPath();
+            }
             gitPath = tmpPath + @"DocsGenerator\gitdownloads\";
-            pdfPath = tmpPath + @"DocsGenerator\pdf\";
-            
-            if (!GetGitDirectories(gitUrl, gitPath))
+            clearOldData(tmpPath + @"DocsGenerator\");
+            // Step 1: Fetch files
+
+            if (!GetGitDirectories(gitUrl, gitPath, branchName))
             {
-                Console.WriteLine("Error fetching git files.");
-                return;
+                throw new Exception("Error fetching files. Given URL: " + gitUrl);
             }
 
-            List<DocumentsWrapper> docsList = getDocumentsWrapperList(gitPath);
+            // Step 2: Parse all .md files to html format (with editing)
+            DocumentsWrapperFactory docFactory = new DocumentsWrapperFactory();
+            List<DocumentsWrapper> docsList = docFactory.GenerateDocumentsWrapperListFromPath(gitPath);
+            unprocessedDocuments = docFactory.UnprocessedDocuments;
+            MdToHtmlParser mdToHtmlParser = new MdToHtmlParser();
+            if (!mdToHtmlParser.parseAllFiles(ref docsList))
+            {
+                throw new Exception("Something went wrong with parsing md to html.");
+            }
+
+            // Step 3: Generate single pdf from given files
+            HtmlToPdfParser htmlToPdfParser = new HtmlToPdfParser();
+            string title = getDocumentTitle(gitPath);
+            string indexText = getIndexText(gitPath);
+            if (!htmlToPdfParser.GeneratePdf(docsList, outputPath, tmpPath + @"DocsGenerator\", title, version))
+            {
+                throw new Exception("Something went wrong with parsing html to pdf.");
+            }
+
+            if (!File.Exists(outputPath))
+            {
+                throw new Exception("Error using wkhtml to create pdf document.");
+            }
 
 
         }
 
-        private List<DocumentsWrapper> getDocumentsWrapperList(string rootDir)
+        
+        // TODO: move to separate class?
+        private bool GetGitDirectories(string gitUrl, string outputPath, string branchName)
         {
-            List<DocumentsWrapper> docsList = new List<DocumentsWrapper>();
-            if (File.Exists(rootDir + "TOC.md"))
+            string result;
+            if (string.IsNullOrEmpty(branchName))
             {
-                docsList = parseTOC(rootDir);
-            }
-            else
-            {
-                generateAlphabeticalDocsList(rootDir);
-            }
-            for(int i = 0; i < docsList.Count; i++)
-            {
-                DocumentsWrapper currentDoc = docsList[i];
-                if (currentDoc.IsDirectory)
-                {
-                    docsFillRecursive(ref currentDoc);
-                }
-            }
-        }
-
-        private List<DocumentsWrapper> parseTOC(string dirPath)
-        {
-            List<DocumentsWrapper> docsList = new List<DocumentsWrapper>();
-            using (StreamReader toc = new StreamReader(dirPath + "TOC.md"))
-            {
-                string line;
-                Regex regex = new Regex(@"# \[^[a-zA-Z0-9]*\]\(^[a-zA-Z0-9]*\)$");
-                while ((line = toc.ReadLine()) != null)
-                {
-                    if (!line.StartsWith("#")) continue;
-                    Match match = regex.Match(line);
-                    DocumentsWrapper doc = new DocumentsWrapper();
-                    doc.Title = match.Groups[0].Value;
-                    doc.fileName = match.Groups[1].Value;
-                    // Check if it is a directory or a file:
-                    if (File.Exists(dirPath + doc.fileName))
-                    {
-                        doc.GitPath = dirPath + doc.fileName;
-                        doc.IsDirectory = false;
-                    }
-                    else
-                    {
-                        int indexOfDotmd = doc.fileName.LastIndexOf('.');
-                        doc.fileName = doc.fileName.Remove(indexOfDotmd) + @"\";
-                        doc.IsDirectory = true;
-                        doc.GitPath = dirPath + doc.fileName;
-                    }
-                    docsList.Add(doc);
-                }
-            }
-            return docsList;
-        }
-
-        private List<DocumentsWrapper> generateAlphabeticalDocsList(string dirPath)
-        {
-            IEnumerable<string> allFiles = Directory.EnumerateFileSystemEntries(dirPath);
-            foreach(string currentPath in allFiles)
-            {
-                if (File.Exists(currentPath);
-            }
-            throw new NotImplementedException();
-        }
-
-        private void docsFillRecursive(ref DocumentsWrapper docsDir)
-        {
-            // Check for TOC:
-            if(File.Exists(docsDir.GitPath + "TOC.md"))
-            {
-                docsDir.SubDocuments = parseTOC(docsDir.GitPath);
+                result = Repository.Clone(gitUrl, outputPath);
             } else
             {
-                docsDir.SubDocuments = generateAlphabeticalDocsList(docsDir.GitPath);
+                CloneOptions options = new CloneOptions();
+                options.BranchName = branchName;
+                result = Repository.Clone(gitUrl, outputPath, options);
             }
-
-            // Check for more directories, if found continue recursive
-            for (int i = 0; i < docsDir.SubDocuments.Count; i++)
-            {
-                DocumentsWrapper currentDoc = docsDir.SubDocuments[i];
-                if (currentDoc.IsDirectory)
-                {
-                    docsFillRecursive(ref currentDoc);
-                }
-            }
-        }
-        
-        private bool GetGitDirectories(string gitUrl, string outputPath)
-        {
-            string result = Repository.Clone(gitUrl, outputPath);
             if (String.IsNullOrEmpty(result)) return false;
             else return true;
         }
 
-        
+        private string getIndexText(string indexPath)
+        {
+            if (!indexPath.EndsWith("index.md"))
+            {
+                if (File.Exists(indexPath + "index.md"))
+                {
+                    indexPath = indexPath + "index.md";
+                } else if (File.Exists(indexPath + @"\index.md"))
+                {
+                    indexPath = indexPath + @"\index.md";
+                } else
+                {
+                    return string.Empty;
+                }
+            }
+            using (StreamReader reader = new StreamReader(indexPath))
+            {
+                int headerLinesCount = 0;
+                string line;
+                while((line = reader.ReadLine()) != null)
+                {
+                    if (line.StartsWith("---"))
+                    {
+                        headerLinesCount++;
+                        continue;
+                    }
+                    if (headerLinesCount > 1)
+                    {
+                        if (string.IsNullOrEmpty(line)) continue;
+                        else return line;
+                    }
+                }
+            }
+            return string.Empty;
+        }
+
+        private void clearOldData(string path)
+        {
+            if (Directory.Exists(path))
+            {
+                DeleteDirectory(path);
+            }
+        }
+
+        public bool HasUnprocessedDocuments()
+        {
+            if (unprocessedDocuments == null) return false;
+            if (unprocessedDocuments.Count > 1) return true;
+            else return false;
+        }
+
+        public List<string> getUnprocessedDocumentsDetails()
+        {
+            if (!HasUnprocessedDocuments()) return new List<string>();
+            List<string> details = new List<string>();
+            StringBuilder sb = new StringBuilder();
+            foreach(DocumentsWrapper doc in unprocessedDocuments)
+            {
+                if (!string.IsNullOrEmpty(doc.Title)) sb.Append("Title: " + doc.Title);
+                if (!string.IsNullOrEmpty(doc.GitPath)) sb.Append(" Path: " + doc.GitPath);
+                else if (!string.IsNullOrEmpty(doc.fileName)) sb.Append(" File name: " + doc.fileName);
+                if (sb.Length < 1) sb.Append("Unknown file.");
+                details.Add(sb.ToString());
+                sb.Clear();
+            }
+            return details;
+        }
+
+        private string getDocumentTitle(string rootpath)
+        {
+            if (File.Exists(rootpath + "README.md"))
+            {
+                using (StreamReader reader = new StreamReader(rootpath + "README.md"))
+                {
+                    string line;
+                    while((line = reader.ReadLine()) != null)
+                    {
+                        if (line.StartsWith("# "))
+                        {
+                            return line.Substring(2);
+                        }
+                    }
+                }
+            }
+            if (File.Exists(rootpath + "index.md"))
+            {
+                using (StreamReader reader = new StreamReader(rootpath + "index.md"))
+                {
+                    string line;
+                    while((line = reader.ReadLine()) != null)
+                    {
+                        if (line.StartsWith("title: "))
+                        {
+                            return line.Substring(7);
+                        }
+                    }
+                }
+            }
+            return string.Empty;
+        }
+
+        public static void DeleteDirectory(string target_dir)
+        {
+            string[] files = Directory.GetFiles(target_dir);
+            string[] dirs = Directory.GetDirectories(target_dir);
+
+            foreach (string file in files)
+            {
+                File.SetAttributes(file, FileAttributes.Normal);
+                File.Delete(file);
+            }
+
+            foreach (string dir in dirs)
+            {
+                DeleteDirectory(dir);
+            }
+
+            Directory.Delete(target_dir, true);
+        }
+
     }
 }

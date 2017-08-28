@@ -1,0 +1,32 @@
+body {
+    font-family: Segoe UI;
+    font-weight: lighter;
+    font-size: 40px;
+    margin-left: 50px;
+    margin-right: 50px;
+    margin-top: 100px;
+}
+
+h1 {
+    color: rgb(247,148,40);
+    font-weight: normal;
+}
+
+h2 {
+    color: rgb(55,178,183);
+    font-weight: bolder;
+}
+
+h3 {
+    color: rgb(55,178,183);
+    font-weight: bolder;
+}
+
+h4 {
+    color: rgb(55,178,183);
+    font-weight: bolder;
+}
+
+li {
+    margin-left: 25px;
+}
