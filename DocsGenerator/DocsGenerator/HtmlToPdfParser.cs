@@ -18,19 +18,20 @@ namespace DocsGenerator
         /// <param name="tmpDirPath">Path of a temporary directory for mid-calculation file storage.</param>
         /// <param name="documentTitle">Title of the document to be created.</param>
         /// <returns>True if pdf generation was successfull, false otherwise.</returns>
-        public bool GeneratePdf(List<DocumentsWrapper> docsList, string outputPath, string tmpDirPath, string documentTitle, string indexText)
+        public bool GeneratePdf(List<DocumentsWrapper> docsList, string outputPath, string tmpDirPath, string documentTitle, string version)
         {
-            string tmpFile = tmpDirPath + "ALL.html";
-
+            var tmpFile = tmpDirPath + "ALL.html";
             copyCSSfile(tmpDirPath);
-            string headerPath = copyHeaderFile(tmpDirPath);
-            string footerPath = copyFooterFile(tmpDirPath);
-            string coverPath = copyAndEditCoverFile(tmpDirPath, documentTitle, DateTime.Now, indexText);
-            string tocXslPath = copyTocXslFile(outputPath);
+
+            var headerPath = copyHeaderFile(tmpDirPath);
+            var footerPath = copyFooterFile(tmpDirPath);
+            var coverPath = copyAndEditCoverFile(tmpDirPath, documentTitle, version);
+            var fakeCoverPath = copyFakeCoverFile(tmpDirPath);
+            var tocXslPath = copyTocXslFile(tmpDirPath);
 
             GenerateSingleHtmlFile(docsList, tmpFile);
-            
-            return toPdf(tmpFile, outputPath, headerPath, footerPath, coverPath, tocXslPath);
+
+            return toPdf(tmpFile, outputPath, headerPath, footerPath, coverPath, fakeCoverPath, tocXslPath, tmpDirPath);
         }
 
         /// <summary>
@@ -49,7 +50,7 @@ namespace DocsGenerator
                 recursiveDocumentWriter(docsList, writer, 1);
                 writer.WriteLine("</body>");
             }
-            
+
         }
 
         /// <summary>
@@ -81,7 +82,7 @@ namespace DocsGenerator
         /// <returns>Full file path of the new style.css file.</returns>
         private string copyCSSfile(string outputPath)
         {
-            File.Copy(".\\style.css", outputPath + "style.css");
+            File.Copy(".\\style.css", outputPath + "style.css", true);
             return outputPath + "style.css";
         }
 
@@ -92,7 +93,8 @@ namespace DocsGenerator
         /// <returns>Full file path of the new header.html file.</returns>
         private string copyHeaderFile(string outputPath)
         {
-            File.Copy(".\\header.html", outputPath + "header.html");
+            File.Copy(".\\header.html", outputPath + "header.html", true);
+            File.Copy(".\\Images\\header.png", outputPath + "header.png", true);
             return outputPath + "header.html";
         }
 
@@ -103,14 +105,21 @@ namespace DocsGenerator
         /// <returns>Full file path of the new footer.html file.</returns>
         private string copyFooterFile(string outputPath)
         {
-            File.Copy(".\\footer.html", outputPath + "footer.html");
+            File.Copy(".\\footer.html", outputPath + "footer.html", true);
+            File.Copy(".\\Images\\footer.png", outputPath + "footer.png", true);
             return outputPath + "footer.html";
         }
 
         private string copyTocXslFile(string outputPath)
         {
-            File.Copy(".\\TOCStyle.xsl", outputPath + "TOCStyle.xsl");
+            File.Copy(".\\TOCStyle.xsl", outputPath + "TOCStyle.xsl", true);
             return outputPath + "TOCStyle.xsl";
+        }
+
+        private string copyFakeCoverFile(string outputPath)
+        {
+            File.Copy(".\\fakeCover.html", outputPath + "fakeCover.html", true);
+            return outputPath + "fakeCover.html";
         }
 
         /// <summary>
@@ -120,30 +129,27 @@ namespace DocsGenerator
         /// <param name="documentTitle">Title of the document that will be put in the cover file.</param>
         /// <param name="dateTime">Date parameter that will be put in the cover file.</param>
         /// <returns>Full file path of the new cover.html file.</returns>
-        private string copyAndEditCoverFile(string outputPath, string documentTitle, DateTime dateTime, string indexText)
+        private string copyAndEditCoverFile(string outputPath, string documentTitle, string version)
         {
             using (StreamReader reader = new StreamReader(".\\cover.html"))
             using (StreamWriter writer = new StreamWriter(outputPath + "cover.html"))
             {
                 string line;
-                while((line = reader.ReadLine()) != null)
+                while ((line = reader.ReadLine()) != null)
                 {
                     if (line.Contains("_title_"))
                     {
                         line = line.Replace("_title_", documentTitle);
                     }
-                    if (line.Contains("_date_"))
+                    if (line.Contains("_subtitle_"))
                     {
-                        line = line.Replace("_date_", dateTime.ToShortDateString());
-                    }
-                    if (line.Contains("_index_"))
-                    {
-                        line = line.Replace("_index_", indexText);
+                        line = line.Replace("_subtitle_", $"Documentation for version {version}.");
                     }
                     writer.WriteLine(line);
                 }
             }
-                
+
+            File.Copy(".\\Images\\cover.png", outputPath + "cover.png", true);
             return outputPath + "cover.html";
         }
 
@@ -157,7 +163,7 @@ namespace DocsGenerator
             using (StreamReader reader = new StreamReader(inputFile))
             {
                 string line;
-                while((line = reader.ReadLine()) != null)
+                while ((line = reader.ReadLine()) != null)
                 {
                     outputWriter.WriteLine(line);
                 }
@@ -177,7 +183,7 @@ namespace DocsGenerator
             writer.WriteLine(line);
         }
 
-        
+
 
         /// <summary>
         /// Generates a pdf using wkhtmltopdf with given content, header, footer and cover files to the given output path.
@@ -188,16 +194,69 @@ namespace DocsGenerator
         /// <param name="footerPath">Path of the footer html file.</param>
         /// <param name="coverPath">Path of the cover html file.</param>
         /// <returns>True if pdf generation was successfull, false otherwise.</returns>
-        private bool toPdf(string inputHtmlPath, string outputPdfPath, string headerPath, string footerPath, string coverPath, string tocXslPath)
+        private bool toPdf(string inputHtmlPath, string outputPdfPath, string headerPath, string footerPath, string coverPath, string fakeCoverPath, string tocXslPath, string tmpDirPath)
+        {
+            var contentPdfPath = tmpDirPath + "content.pdf";
+            var coverPdfPath = tmpDirPath + "cover.pdf";
+            
+            createContentPdf(inputHtmlPath, contentPdfPath, headerPath, footerPath, fakeCoverPath, tocXslPath);
+            createCoverPdf(coverPath, coverPdfPath);
+            replaceCover(coverPdfPath, contentPdfPath, outputPdfPath);
+
+            return true;
+        }
+
+        private bool replaceCover(string coverPdfPath, string contentPdfPath, string outPutPdfPath)
+        {
+            ProcessStartInfo startInfo = new ProcessStartInfo();
+            startInfo.FileName = ".\\pdfkt\\pdftk.exe";
+            startInfo.Arguments = "A=" + coverPdfPath + " " +
+                                  "B=" + contentPdfPath + " " +
+                                  "cat A1 B2-end output " + outPutPdfPath;
+            startInfo.UseShellExecute = false;
+            startInfo.RedirectStandardOutput = true;
+
+            Process process = new Process();
+            process.StartInfo = startInfo;
+            process.Start();
+            Console.WriteLine(process.StandardOutput.ReadToEnd());
+            process.WaitForExit();
+
+            return true;
+        }
+
+        private bool createCoverPdf(string inputHtmlPath, string outputPdfPath)
+        {
+            ProcessStartInfo startInfo = new ProcessStartInfo();
+            startInfo.FileName = "wkhtmltopdf.exe";
+            startInfo.Arguments = "-B 0 -L 0 -R 0 -T 0 " +
+                                  inputHtmlPath + " " +
+                                  outputPdfPath;
+            startInfo.UseShellExecute = false;
+            startInfo.RedirectStandardOutput = true;
+
+            Process process = new Process();
+            process.StartInfo = startInfo;
+            process.Start();
+            Console.WriteLine(process.StandardOutput.ReadToEnd());
+            process.WaitForExit();
+
+            return true;
+
+        }
+
+        private bool createContentPdf(string inputHtmlPath, string outputPdfPath, string headerPath, string footerPath, string fakeCoverPath, string tocXslPath)
         {
             ProcessStartInfo startInfo = new ProcessStartInfo();
             startInfo.FileName = "wkhtmltopdf.exe";
             startInfo.Arguments = "--header-html " + headerPath + " " +
+                                  "--margin-left 0 " +
+                                  "--margin-right 0 " +
                                   "--footer-html " + footerPath + " " +
-                                  " cover " + coverPath + " " +
-                                  "--xsl-style-sheet " + tocXslPath +
-                                  "toc " + 
-                                  inputHtmlPath + " " + 
+                                  " cover " + fakeCoverPath + " " +
+                                  "toc " +
+                                  "--xsl-style-sheet " + tocXslPath + " " +
+                                  inputHtmlPath + " " +
                                   outputPdfPath;
             startInfo.UseShellExecute = false;
             startInfo.RedirectStandardOutput = true;

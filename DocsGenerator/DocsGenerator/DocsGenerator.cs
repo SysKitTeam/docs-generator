@@ -13,7 +13,7 @@ namespace DocsGenerator
     {
         private string gitPath;
         private List<DocumentsWrapper> unprocessedDocuments;
-        public void GenerateDocs(string gitUrl, string outputPath, string branchName, string tmpPath = null)
+        public void GenerateDocs(string gitUrl, string outputPath, string branchName, string version, string tmpPath = null)
         {
             if (string.IsNullOrEmpty(tmpPath))
             {
@@ -42,7 +42,7 @@ namespace DocsGenerator
             HtmlToPdfParser htmlToPdfParser = new HtmlToPdfParser();
             string title = getDocumentTitle(gitPath);
             string indexText = getIndexText(gitPath);
-            if (!htmlToPdfParser.GeneratePdf(docsList, outputPath, tmpPath + @"DocsGenerator\", title, indexText))
+            if (!htmlToPdfParser.GeneratePdf(docsList, outputPath, tmpPath + @"DocsGenerator\", title, version))
             {
                 throw new Exception("Something went wrong with parsing html to pdf.");
             }

@@ -12,7 +12,7 @@ namespace DocsGeneratorConsole
         {
             if (args.Length < 2)
             {
-                Console.WriteLine("Usage: DocsGeneratorConsole <input url> <output path> <branch name (optional)>");
+                Console.WriteLine("Usage: DocsGeneratorConsole <input url> <output path> <version> <branch name (optional)>");
                 return;
             }
             
@@ -31,13 +31,13 @@ namespace DocsGeneratorConsole
             DocsGenerator.DocsGenerator generator = new DocsGenerator.DocsGenerator();
             try
             {
-                if (args.Length > 2)
+                if (args.Length > 3)
                 {
-                    generator.GenerateDocs(args[0], args[1], args[2]);
+                    generator.GenerateDocs(args[0], args[1], args[2], string.Empty);
                 }
                 else
                 {
-                    generator.GenerateDocs(args[0], args[1], string.Empty);
+                    generator.GenerateDocs(args[0], args[1], string.Empty, string.Empty);
                 }
                 
             }

@@ -46,8 +46,9 @@ namespace DocsGeneratorGUI
                 DocsGenerator.DocsGenerator generator = new DocsGenerator.DocsGenerator();
                 try
                 {
-                    generator.GenerateDocs(tbInputPath.Text, tbOutputPath.Text, tbBranch.Text);
-                } catch (Exception exc)
+                    generator.GenerateDocs(tbInputPath.Text, tbOutputPath.Text, tbBranch.Text, tbVersion.Text);
+                }
+                catch (Exception exc)
                 {
                     MessageBox.Show(exc.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     lblStatus.Text = "Error.";

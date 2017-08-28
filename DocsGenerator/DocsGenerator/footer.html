@@ -1,11 +1,56 @@
 ﻿<!DOCTYPE html>
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+
 <head>
-    <meta charset="utf-8" />
-    <title>This is a footer.</title>
+    <script>
+        function subst() {
+            var vars = {};
+            var query_strings_from_url = document.location.search.substring(1).split('&');
+            for (var query_string in query_strings_from_url) {
+                if (query_strings_from_url.hasOwnProperty(query_string)) {
+                    var temp_var = query_strings_from_url[query_string].split("=", 2);
+                    vars[temp_var[0]] = decodeURI(temp_var[1]);
+                }
+            }
+            var css_selector_classes = ['page', 'frompage', 'topage', 'webpage', 'secton', 'subsection', 'date', 'isodate', 'time', 'title', 'doctitle', 'sitepage', 'sitepages'];
+            for (var css_class in css_selector_classes) {
+                if (css_selector_classes.hasOwnProperty(css_class)) {
+                    var element = document.getElementsByClassName(css_selector_classes[css_class]);
+                    for (var j = 0; j < element.length; ++j) {
+                        element[j].textContent = vars[css_selector_classes[css_class]];
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            border: 0;
+            margin: 0;
+            background-image: url("./footer.png");
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-position: center bottom;
+            height: 50px;
+        }
+
+        span {
+            position: absolute;
+            right: 100px;
+            background-color: white;
+            height: 50px;
+            padding-top: 21px;
+            width: 50px;
+            text-align: center;
+            font-family: Segoe UI;
+            font-weight: lighter;
+        }
+    </style>
 </head>
-<body>
-    <p>This is a footer. It is on the bottom of the page.</p>
+
+<body onload="subst()">
+    <span class="page"></span>
 </body>
+
 </html>
