@@ -8,6 +8,14 @@ body {
     color: rgb(77, 77, 79);
 }
 
+strong, b {
+    font-weight: bold;
+}
+
+i, cite, em, var, address {
+    font-style: italic
+}
+
 h1 {
     color: rgb(247,148,40);
     font-weight: normal;

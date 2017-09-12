@@ -111,31 +111,35 @@ namespace DocsGenerator
                     }
                     else if (line.Contains("<h3>") && line.Contains("</h3>"))   // headers greater than level 3 are replaced with <p> because
                     {                                                           // wkhtmltopdf puts all the headers in the table of contents
-                        line = line.Replace("<h3>", "<p>");
-                        line = line.Replace("</h3>", "</p>");
+                        var openTag = "<strong class=\"header-three\">";
+                        line = line.Replace("<h3>", openTag);
+                        line = line.Replace("</h3>", "</strong>");
                         if (firstHeader)
                         {
-                            line = line.Replace("<p>", "<p id=\"internal/" + relativePath + "\">");
+                            line = line.Replace(openTag, "<strong class=\"header-three\" id=\"internal/" + relativePath + "\">");
                             firstHeader = false;
                         }
                     }
                     else if (line.Contains("<h4>") && line.Contains("</h4>"))
                     {
-                        line = line.Replace("<h4>", "<p>");
-                        line = line.Replace("</h4>", "</p>");
+                        var openTag = "<strong class=\"header-four\">";
+                        line = line.Replace("<h4>", openTag);
+                        line = line.Replace("</h4>", "</strong>");
                         if (firstHeader)
                         {
-                            line = line.Replace("<p>", "<p id=\"internal/" + relativePath + "\">");
+                            line = line.Replace(openTag, "<strong class=\"header-four\" id=\"internal/" + relativePath + "\">");
                             firstHeader = false;
                         }
 
-                    } else if (line.Contains("<h5>") && line.Contains("</h5>"))
+                    }
+                    else if (line.Contains("<h5>") && line.Contains("</h5>"))
                     {
-                        line = line.Replace("<h5>", "<p>");
-                        line = line.Replace("</h5>", "</p>");
+                        var openTag = "<strong class=\"header-five\">";
+                        line = line.Replace("<h5>", openTag);
+                        line = line.Replace("</h5>", "</strong>");
                         if (firstHeader)
                         {
-                            line = line.Replace("<p>", "<p id=\"internal/" + relativePath + "\">");
+                            line = line.Replace(openTag, "<strong class=\"header-five\" id=\"internal/" + relativePath + "\">");
                             firstHeader = false;
                         }
                     }
