@@ -50,8 +50,6 @@
 
           }
 
-          ul ul {font-size: 80%; }
-
           ul {padding-left: 0em;}
 
           ul ul {padding-left: 1em;}

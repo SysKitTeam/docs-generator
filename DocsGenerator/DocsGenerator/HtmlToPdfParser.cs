@@ -198,25 +198,54 @@ namespace DocsGenerator
         {
             var contentPdfPath = tmpDirPath + "content.pdf";
             var coverPdfPath = tmpDirPath + "cover.pdf";
-            
+            var tmpPdf = tmpDirPath + "temp.pdf";
+            var bookmarksOutput = tmpDirPath + "bookmark.info";
+
             createContentPdf(inputHtmlPath, contentPdfPath, headerPath, footerPath, fakeCoverPath, tocXslPath);
             createCoverPdf(coverPath, coverPdfPath);
-            replaceCover(coverPdfPath, contentPdfPath, outputPdfPath);
+            replaceCover(coverPdfPath, contentPdfPath, outputPdfPath, tmpPdf, bookmarksOutput);
 
             return true;
         }
 
-        private bool replaceCover(string coverPdfPath, string contentPdfPath, string outPutPdfPath)
+        private bool replaceCover(string coverPdfPath, string contentPdfPath, string outPutPdfPath, string tempPdfPath, string bookmarkOutputPath)
         {
             ProcessStartInfo startInfo = new ProcessStartInfo();
             startInfo.FileName = ".\\pdfkt\\pdftk.exe";
-            startInfo.Arguments = "A=" + coverPdfPath + " " +
-                                  "B=" + contentPdfPath + " " +
-                                  "cat A1 B2-end output " + outPutPdfPath;
+            startInfo.Arguments = "A=" + contentPdfPath + " " +
+                                  "B=" + coverPdfPath + " " +
+                                  "cat B1 A2-end output " + tempPdfPath;
             startInfo.UseShellExecute = false;
             startInfo.RedirectStandardOutput = true;
 
             Process process = new Process();
+            process.StartInfo = startInfo;
+            process.Start();
+            Console.WriteLine(process.StandardOutput.ReadToEnd());
+            process.WaitForExit();
+
+            startInfo = new ProcessStartInfo();
+            startInfo.FileName = ".\\pdfkt\\pdftk.exe";
+            startInfo.Arguments = contentPdfPath + " " +
+                                  "dump_data output " + bookmarkOutputPath;
+            startInfo.UseShellExecute = false;
+            startInfo.RedirectStandardOutput = true;
+
+            process = new Process();
+            process.StartInfo = startInfo;
+            process.Start();
+            Console.WriteLine(process.StandardOutput.ReadToEnd());
+            process.WaitForExit();
+
+            startInfo = new ProcessStartInfo();
+            startInfo.FileName = ".\\pdfkt\\pdftk.exe";
+            startInfo.Arguments = tempPdfPath + " " +
+                                  "update_info " + bookmarkOutputPath + " "
+                                  + "output " + outPutPdfPath;
+            startInfo.UseShellExecute = false;
+            startInfo.RedirectStandardOutput = true;
+
+            process = new Process();
             process.StartInfo = startInfo;
             process.Start();
             Console.WriteLine(process.StandardOutput.ReadToEnd());
@@ -250,8 +279,7 @@ namespace DocsGenerator
             ProcessStartInfo startInfo = new ProcessStartInfo();
             startInfo.FileName = "wkhtmltopdf.exe";
             startInfo.Arguments = "--header-html " + headerPath + " " +
-                                  "--margin-left 0 " +
-                                  "--margin-right 0 " +
+                                  "--margin-left 0  --margin-right 0 " +
                                   "--footer-html " + footerPath + " " +
                                   " cover " + fakeCoverPath + " " +
                                   "toc " +
@@ -266,6 +294,8 @@ namespace DocsGenerator
             process.Start();
             Console.WriteLine(process.StandardOutput.ReadToEnd());
             process.WaitForExit();
+
+
 
             return true;
         }

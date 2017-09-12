@@ -1,10 +1,11 @@
 body {
     font-family: Segoe UI;
     font-weight: lighter;
-    font-size: 40px;
+    font-size: 32px;
     margin-left: 50px;
     margin-right: 50px;
     margin-top: 100px;
+    color: rgb(77, 77, 79);
 }
 
 h1 {
