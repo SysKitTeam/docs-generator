@@ -205,6 +205,7 @@ namespace DocsGenerator
         {
             if (fileName.EndsWith(".md"))
             {
+                relativePath += "\\";
                 if (File.Exists(relativePath + fileName))
                 {
                     doc.fileName = fileName;
