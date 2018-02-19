@@ -205,7 +205,6 @@ namespace DocsGenerator
         {
             if (fileName.EndsWith(".md"))
             {
-                relativePath += "\\";
                 if (File.Exists(relativePath + fileName))
                 {
                     doc.fileName = fileName;
@@ -228,7 +227,7 @@ namespace DocsGenerator
                 if (Directory.Exists(relativePath + fileName))
                 {
                     doc.fileName = fileName;
-                    doc.GitPath = relativePath + fileName;
+                    doc.GitPath = relativePath + fileName + "\\";
                     doc.IsDirectory = true;
                     doc.RelativePath = doc.GitPath.Replace(absoluteRootPath, "");
                 }
@@ -275,7 +274,7 @@ namespace DocsGenerator
             if (input.Contains("("))
             {
                 string[] parts = input.Split(']');
-                title = parts[0].Substring(3).Trim();
+                title = parts[0].Substring(parts[0].IndexOf('[')+1).Trim();
                 fileName = parts[1].Replace(")", "").Substring(1).Trim();
             } else
             {
