@@ -205,7 +205,6 @@ namespace DocsGenerator
         {
             if (fileName.EndsWith(".md"))
             {
-                relativePath += "\\";
                 if (File.Exists(relativePath + fileName))
                 {
                     doc.fileName = fileName;
@@ -228,7 +227,7 @@ namespace DocsGenerator
                 if (Directory.Exists(relativePath + fileName))
                 {
                     doc.fileName = fileName;
-                    doc.GitPath = relativePath + fileName;
+                    doc.GitPath = relativePath + fileName + "\\";
                     doc.IsDirectory = true;
                     doc.RelativePath = doc.GitPath.Replace(absoluteRootPath, "");
                 }
